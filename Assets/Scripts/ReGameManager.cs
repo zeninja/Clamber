@@ -5,8 +5,23 @@ using UnityEngine.SceneManagement;
 
 public class ReGameManager : MonoBehaviour {
 
-	void Start() {
+	private static ReGameManager instance;
+	public static ReGameManager GetInstance() {
+		return instance;
+	}
 
+	void Awake() {
+		if (instance == null) {
+			instance = this;
+		} else {
+			if (this != instance) {
+				Destroy(this.gameObject);
+			}
+		}
+	}
+
+	void Start() {
+		
 	}
 
 	void Update(){
@@ -15,7 +30,7 @@ public class ReGameManager : MonoBehaviour {
 		}
 	}
 
-	void Reset() {
+	public static void Reset() {
 		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 	}
 }

@@ -16,7 +16,10 @@ public class ReHand : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        spreadAngle = HoldSpawner.spreadAngle;
     }
+
+    float spreadAngle;
 
     // Update is called once per frame
     void Update()
@@ -27,6 +30,18 @@ public class ReHand : MonoBehaviour
     }
 
     public bool useKeyboard;
+
+    void HandleMobileInput()
+    {
+
+        if (Input.touchCount > 0)
+        {
+            inputJumpStart = Input.touches[0].phase == TouchPhase.Began;
+            inputJumpHeld  = Input.touches[0].phase == TouchPhase.Moved || Input.touches[0].phase == TouchPhase.Stationary;
+            inputJumpEnd   = Input.touches[0].phase == TouchPhase.Ended || Input.touches[0].phase == TouchPhase.Canceled;
+        }
+        inputHorizontal = Input.acceleration.x;
+    }
 
     void HandleInput()
     {
@@ -46,16 +61,10 @@ public class ReHand : MonoBehaviour
         inputHorizontal = Input.GetAxisRaw("Horizontal");
     }
 
-    void HandleMobileInput()
-    {
-
-        if (Input.touchCount > 0)
-        {
-            inputJumpStart = Input.touches[0].phase == TouchPhase.Began;
-            inputJumpHeld  = Input.touches[0].phase == TouchPhase.Moved || Input.touches[0].phase == TouchPhase.Stationary;
-            inputJumpEnd   = Input.touches[0].phase == TouchPhase.Ended || Input.touches[0].phase == TouchPhase.Canceled;
+    void OnTriggerEnter2D(Collider2D other) {
+        if (other.CompareTag("KillTrigger")) {
+            ReGameManager.Reset();
         }
-        inputHorizontal = Input.acceleration.x;
     }
 
     void SetState(HandState newState)
@@ -72,10 +81,18 @@ public class ReHand : MonoBehaviour
         }
     }
 
+    // [Range(0,1)]
+    public float tiltRange = 1;
+
     float inputHorizontal;
     void Rotate()
     {
-        Vector3 targetRotation = new Vector3(0, 0, inputHorizontal * -HoldSpawner.spreadAngle);
+        tiltRange = Mathf.Clamp01(tiltRange);
+
+        float rotationAmt = inputHorizontal;
+        rotationAmt = Extensions.mapRangeMinMax(-tiltRange, tiltRange, -spreadAngle, spreadAngle, rotationAmt);
+
+        Vector3 targetRotation = new Vector3(0, 0, rotationAmt);
         transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(targetRotation), rotationSpeed * Time.deltaTime);
     }
 
@@ -163,6 +180,8 @@ public class ReHand : MonoBehaviour
     void OnDrawGizmos() {
         Gizmos.color = Color.white;
         Gizmos.DrawWireSphere(transform.position, GetComponent<CircleCollider2D>().radius / 2);
+
+        // Gizmos.DrawLine()
     }
 
 }
