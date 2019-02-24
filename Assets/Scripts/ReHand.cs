@@ -10,13 +10,12 @@ public class ReHand : MonoBehaviour
     Rigidbody2D rb;
 
     public enum HandState { OnHold, Jumping };
-    HandState state;
+    HandState state = HandState.OnHold;
 
     // Use this for initialization
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        spreadAngle = HoldSpawner.spreadAngle;
     }
 
     float spreadAngle;
@@ -24,6 +23,8 @@ public class ReHand : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        spreadAngle = HoldSpawner.spreadAngle;
+
         HandleInput();
         Rotate();
         ProcessJumpInput();
@@ -57,7 +58,7 @@ public class ReHand : MonoBehaviour
     void HandleKeyboardInput()
     {
         inputJumpStart  = Input.GetKeyDown(KeyCode.Space);
-        inputJumpEnd    = Input.GetKeyUp(KeyCode.Space);
+        inputJumpEnd    = Input.GetKeyUp  (KeyCode.Space);
         inputHorizontal = Input.GetAxisRaw("Horizontal");
     }
 
@@ -102,13 +103,13 @@ public class ReHand : MonoBehaviour
     bool inputJumpHeld;
     bool inputJumpEnd;
     Hold currentHold;
-    bool canJump;
+    bool canJump = true;
 
     void ProcessJumpInput()
     {
         if (inputJumpStart && canJump)
         {
-            // Debug.Log("Jumping");
+            Debug.Log("Jumping");
             rb.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
             rb.gravityScale = 1;
             SetState(HandState.Jumping);
@@ -123,28 +124,6 @@ public class ReHand : MonoBehaviour
 
     void TryToGrab()
     {
-        // Debug.Log("Grabbing");
-        // Vector2 handSize = GetComponent<BoxCollider2D>().size;
-        // RaycastHit2D hit = Physics2D.BoxCast(transform.position, handSize, transform.eulerAngles.z, Vector2.zero);
-        // GetComponent<SpriteRenderer>().color = Color.white;
-        // if (hit)
-        // {
-        //     if (hit.collider.CompareTag("Hold"))
-        //     {
-        //         Debug.Log("HIT SOMETHING");
-        //         currentHold = hit.collider.gameObject.GetComponent<Hold>();
-        //         currentHold.GetGrabbed();
-        //         rb.gravityScale = 0;
-        //         rb.velocity = Vector2.zero;
-        //         GetComponent<SpriteRenderer>().color = Color.green;
-        //         SetState(HandState.OnHold);
-        //     }
-        // }
-        // else
-        // {
-        //     GetComponent<SpriteRenderer>().color = Color.red;
-        // }
-
         float handRadius = GetComponent<CircleCollider2D>().radius / 2;
         
         int layerMask = 1 << LayerMask.NameToLayer("Hold");
@@ -181,7 +160,13 @@ public class ReHand : MonoBehaviour
         Gizmos.color = Color.white;
         Gizmos.DrawWireSphere(transform.position, GetComponent<CircleCollider2D>().radius / 2);
 
-        // Gizmos.DrawLine()
+        // Vector3 toVec = 
+        Gizmos.DrawLine(transform.position, transform.position + Quaternion.AngleAxis(-HoldSpawner.spreadAngle, Vector3.back) * Vector2.up );
+        Gizmos.DrawLine(transform.position, transform.position + Quaternion.AngleAxis( HoldSpawner.spreadAngle, Vector3.back) * Vector2.up );
+
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(transform.position, transform.position + transform.up);
     }
 
 }
