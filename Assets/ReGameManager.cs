@@ -5,8 +5,6 @@ using UnityEngine.SceneManagement;
 
 public class ReGameManager : MonoBehaviour {
 
-	public Hand hand;
-
 	void Start() {
 
 	}

@@ -9,7 +9,7 @@ public class CameraFollow : MonoBehaviour {
 	public bool trackX, trackY;
 	public float zDist = -10;
 
-	public bool trackRotation;
+	// public bool trackRotation;
 	
 	// Update is called once per frame
 	void LateUpdate () {
@@ -27,7 +27,6 @@ public class CameraFollow : MonoBehaviour {
 		}
 
 		transform.position = new Vector3(x, y, zDist);
-
-
+		transform.rotation = target.transform.rotation;
 	}
 }

@@ -14,12 +14,13 @@ public class HoldSpawner : MonoBehaviour {
 	Vector2 nextHoldPos;
 
 	public float holdDistance;
-	public bool keepHoldsOnScreen = true;
+	// public bool keepHoldsOnScreen = true;
 	
 	void Start() {
 		nextHoldPos = startHoldPos;
 		StartCoroutine(SpawnHolds());
 
+		spreadAngle = maxSpreadAngle;
 	}
 
 
@@ -31,12 +32,12 @@ public class HoldSpawner : MonoBehaviour {
 
 			nextHoldVector = GetNextHoldVector();
 
-			if(keepHoldsOnScreen) {
-				while (Mathf.Abs(nextHoldPos.x + nextHoldVector.x) > ScreenInfo.w) {
-					nextHoldVector = GetNextHoldVector();
-					yield return null;
-				}
-			}
+			// if(keepHoldsOnScreen) {
+			// 	while (Mathf.Abs(nextHoldPos.x + nextHoldVector.x) > ScreenInfo.w) {
+			// 		nextHoldVector = GetNextHoldVector();
+			// 		yield return null;
+			// 	}
+			// }
 
 			nextHoldPos += nextHoldVector;
 			// yield return new WaitForSeconds(.1f);
@@ -48,11 +49,15 @@ public class HoldSpawner : MonoBehaviour {
 	public bool spreadHoldSpawns;
 	public float distanceToNextHold = 2;
 
+	public float maxSpreadAngle = 45;
+
+	public static float spreadAngle;
+
 	Vector2 GetNextHoldVector() {
 		Quaternion rotation = Quaternion.identity;
 
-		if(spreadHoldSpawns) {
-			rotation = Quaternion.AngleAxis(Random.Range(-40, 40), Vector3.forward);
+		if (spreadHoldSpawns) {
+			rotation = Quaternion.AngleAxis(Random.Range(-maxSpreadAngle, maxSpreadAngle), Vector3.forward);
 		}
 
 		Vector2 nextHoldVector = rotation * Vector2.up * distanceToNextHold;

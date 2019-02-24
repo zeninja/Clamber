@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: 5146667f4166e49ffa9cce165e83a15d
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: RACE1 Brannt Chiseled NCV
+  fontNames:
+  - RACE1 Brannt Chiseled NCV
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 017c7a0c9400943288799485bb1d3f9c, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
