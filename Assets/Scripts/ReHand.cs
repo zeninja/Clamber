@@ -41,7 +41,21 @@ public class ReHand : MonoBehaviour
             inputJumpHeld  = Input.touches[0].phase == TouchPhase.Moved || Input.touches[0].phase == TouchPhase.Stationary;
             inputJumpEnd   = Input.touches[0].phase == TouchPhase.Ended || Input.touches[0].phase == TouchPhase.Canceled;
         }
-        inputHorizontal = -Input.acceleration.x;
+
+        if (Input.touchCount == 0) {
+            inputJumpEnd = false;
+        }
+        // inputHorizontal = -Input.acceleration.x;
+
+        Quaternion phoneRotation = GyroToUnity(Input.gyro.attitude);
+        Vector3 rotationVector   = phoneRotation.eulerAngles;
+
+        inputHorizontal = rotationVector.x;
+    }
+
+    Quaternion GyroToUnity(Quaternion q)
+    {
+        return new Quaternion(q.x, q.y, -q.z, -q.w);
     }
 
     void HandleInput()
@@ -64,7 +78,11 @@ public class ReHand : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other) {
         if (other.CompareTag("KillTrigger")) {
-            ReGameManager.Reset();
+            ReGameManager.GetInstance().Reset();
+        }
+
+        if (other.CompareTag("LevelEnd")) {
+            ReGameManager.GetInstance().HandleLevelEnd();
         }
     }
 
@@ -75,11 +93,19 @@ public class ReHand : MonoBehaviour
         {
             case HandState.Jumping:
                 canJump = false;
+                CheckFirstInput();
                 break;
             case HandState.OnHold:
                 canJump = true;
                 break;
         }
+    }
+
+    bool hasStarted = false;
+
+    void CheckFirstInput() {
+        hasStarted = true;
+        ReGameManager.GetInstance().StartGame();
     }
 
     // [Range(0,1)]
@@ -153,7 +179,10 @@ public class ReHand : MonoBehaviour
     void OnGUI()
     {
 
-        GUI.Label(new Rect(Screen.width / 2, 0, 100, 100), Input.acceleration.ToString());
+        GUI.Label(new Rect(0, 0, 200, 100),   "gyro attitude:   " + Input.gyro.attitude);
+        GUI.Label(new Rect(0, 100, 200, 100), "inputHorizontal: " + inputHorizontal.ToString());
+
+        
     }
 
     void OnDrawGizmos() {
