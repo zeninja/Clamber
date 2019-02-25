@@ -147,7 +147,7 @@ MonoBehaviour:
   startHoldPos: {x: 0, y: 0}
   holdDistance: 0
   spreadHoldSpawns: 1
-  distanceToNextHold: 2
+  distanceToNextHold: 1.8
   maxSpreadAngle: 45
 --- !u!4 &292272793
 Transform:
@@ -173,6 +173,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3c929224ed5ba9408a1e959fcf663f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  timer: {fileID: 1242348122}
 --- !u!1 &366372024
 GameObject:
   m_ObjectHideFlags: 0
@@ -312,8 +313,8 @@ GameObject:
   - component: {fileID: 390065948}
   - component: {fileID: 390065947}
   m_Layer: 0
-  m_Name: KillTrigger (1)
-  m_TagString: KillTrigger
+  m_Name: LevelEnd
+  m_TagString: LevelEnd
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -504,7 +505,6 @@ GameObject:
   - component: {fileID: 1242348121}
   - component: {fileID: 1242348123}
   - component: {fileID: 1242348122}
-  - component: {fileID: 1242348124}
   m_Layer: 5
   m_Name: Timer
   m_TagString: Untagged
@@ -551,8 +551,8 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_text: 00:00
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 341c85f3e80854945adf3d9b05063a51, type: 2}
-  m_sharedMaterial: {fileID: 21457106798874164, guid: 341c85f3e80854945adf3d9b05063a51,
+  m_fontAsset: {fileID: 11400000, guid: 6e150cdefa93d6c47a56d0d0c1ea65d1, type: 2}
+  m_sharedMaterial: {fileID: 21252142216194918, guid: 6e150cdefa93d6c47a56d0d0c1ea65d1,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -651,18 +651,6 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1242348120}
   m_CullTransparentMesh: 0
---- !u!114 &1242348124
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1242348120}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f910f2150f6c24af1b771e7fdda88576, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  startTime: 0
 --- !u!1 &1307082301
 GameObject:
   m_ObjectHideFlags: 0

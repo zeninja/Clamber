@@ -1,0 +1,24 @@
+fileFormatVersion: 2
+guid: db036e98479c60f4fab786c8584ad4a3
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Letter Gothic Std
+  fontNames:
+  - Letter Gothic Std
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 20760c0661807a14aa2e337720f752dc, type: 3}
+  - {fileID: 12800000, guid: 045615ae5b7e9a64a831479e372f3eff, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
