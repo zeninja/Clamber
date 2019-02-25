@@ -41,7 +41,7 @@ public class ReHand : MonoBehaviour
             inputJumpHeld  = Input.touches[0].phase == TouchPhase.Moved || Input.touches[0].phase == TouchPhase.Stationary;
             inputJumpEnd   = Input.touches[0].phase == TouchPhase.Ended || Input.touches[0].phase == TouchPhase.Canceled;
         }
-        inputHorizontal = Input.acceleration.x;
+        inputHorizontal = -Input.acceleration.x;
     }
 
     void HandleInput()
