@@ -16,6 +16,12 @@ public class Extensions : MonoBehaviour {
 	public static float mapRangeMinMax(float a1, float a2, float b1, float b2, float s)
 	{
 		float value =  b1 + (s - a1) * (b2 - b1) / (a2 - a1);
+		if(b2 < b1) {
+			// accounts for values being mapped from 0 to -1 (or lower)
+			float swap = b1;
+			b1 = b2;
+			b2 = swap;
+		}
 		value = Mathf.Clamp(value, b1, b2);
 		return value;
 	}

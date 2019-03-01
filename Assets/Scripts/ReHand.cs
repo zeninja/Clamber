@@ -11,6 +11,8 @@ public class ReHand : MonoBehaviour
 
     public enum HandState { OnHold, Jumping };
     HandState state = HandState.OnHold;
+    // float spreadAngle;
+    bool hasStarted = false;
 
     // Use this for initialization
     void Start()
@@ -18,62 +20,12 @@ public class ReHand : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    float spreadAngle;
 
     // Update is called once per frame
     void Update()
     {
-        spreadAngle = HoldSpawner.spreadAngle;
-
-        HandleInput();
         Rotate();
         ProcessJumpInput();
-    }
-
-    public bool useKeyboard;
-
-    void HandleMobileInput()
-    {
-
-        if (Input.touchCount > 0)
-        {
-            inputJumpStart = Input.touches[0].phase == TouchPhase.Began;
-            inputJumpHeld  = Input.touches[0].phase == TouchPhase.Moved || Input.touches[0].phase == TouchPhase.Stationary;
-            inputJumpEnd   = Input.touches[0].phase == TouchPhase.Ended || Input.touches[0].phase == TouchPhase.Canceled;
-        }
-
-        if (Input.touchCount == 0) {
-            inputJumpEnd = false;
-        }
-        // inputHorizontal = -Input.acceleration.x;
-
-        Quaternion phoneRotation = GyroToUnity(Input.gyro.attitude);
-        Vector3 rotationVector   = phoneRotation.eulerAngles;
-
-        inputHorizontal = rotationVector.x;
-    }
-
-    Quaternion GyroToUnity(Quaternion q)
-    {
-        return new Quaternion(q.x, q.y, -q.z, -q.w);
-    }
-
-    void HandleInput()
-    {
-        HandleMobileInput();
-        #if UNITY_EDITOR
-        if (useKeyboard)
-        {
-            HandleKeyboardInput();
-        }
-        #endif
-    }
-
-    void HandleKeyboardInput()
-    {
-        inputJumpStart  = Input.GetKeyDown(KeyCode.Space);
-        inputJumpEnd    = Input.GetKeyUp  (KeyCode.Space);
-        inputHorizontal = Input.GetAxisRaw("Horizontal");
     }
 
     void OnTriggerEnter2D(Collider2D other) {
@@ -93,7 +45,6 @@ public class ReHand : MonoBehaviour
         {
             case HandState.Jumping:
                 canJump = false;
-                CheckFirstInput();
                 break;
             case HandState.OnHold:
                 canJump = true;
@@ -101,39 +52,35 @@ public class ReHand : MonoBehaviour
         }
     }
 
-    bool hasStarted = false;
-
-    void CheckFirstInput() {
-        hasStarted = true;
-        ReGameManager.GetInstance().StartGame();
-    }
-
-    // [Range(0,1)]
-    public float tiltRange = 1;
-
-    float inputHorizontal;
     void Rotate()
     {
-        tiltRange = Mathf.Clamp01(tiltRange);
-
-        float rotationAmt = inputHorizontal;
-        rotationAmt = Extensions.mapRangeMinMax(-tiltRange, tiltRange, -spreadAngle, spreadAngle, rotationAmt);
+        float rotationAmt = InputManager.inputHorizontal;
+        rotationAmt = Extensions.mapRangeMinMax(-1, 1, -HoldSpawner.spreadAngle, HoldSpawner.spreadAngle, rotationAmt);
 
         Vector3 targetRotation = new Vector3(0, 0, rotationAmt);
         transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(targetRotation), rotationSpeed * Time.deltaTime);
+        currentRotation = transform.rotation.eulerAngles;
+
+        Debug.Log(currentRotation);
     }
+
+
+    public static Vector3 currentRotation;
 
     public float jumpForce;
 
-    bool inputJumpStart;
-    bool inputJumpHeld;
-    bool inputJumpEnd;
+    // bool inputJumpStart;
+    // bool inputJumpHeld;
+    // bool inputJumpEnd;
     Hold currentHold;
     bool canJump = true;
 
     void ProcessJumpInput()
     {
-        if (inputJumpStart && canJump)
+
+
+
+        if (InputManager.inputJumpStart && canJump)
         {
             Debug.Log("Jumping");
             rb.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
@@ -141,7 +88,7 @@ public class ReHand : MonoBehaviour
             SetState(HandState.Jumping);
         }
 
-        if (inputJumpEnd)
+        if (InputManager.inputJumpEnd)
         {
             TryToGrab();
         }
@@ -179,8 +126,9 @@ public class ReHand : MonoBehaviour
     void OnGUI()
     {
 
-        GUI.Label(new Rect(0, 0, 200, 100),   "gyro attitude:   " + Input.gyro.attitude);
-        GUI.Label(new Rect(0, 100, 200, 100), "inputHorizontal: " + inputHorizontal.ToString());
+        GUI.Label(new Rect(0, 0, ScreenInfo.x, ScreenInfo.y),   "gyro attitude:   " + Input.gyro.attitude + "\n" +
+                                                                "euler angles:    " + Input.gyro.attitude.eulerAngles + "\n" +
+                                                                "inputHorizontal: " + InputManager.inputHorizontal.ToString());
 
         
     }
