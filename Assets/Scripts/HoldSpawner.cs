@@ -12,8 +12,6 @@ public class HoldSpawner : MonoBehaviour {
 	void Start() {
 		nextHoldPos = startHoldPos;
 		StartCoroutine(SpawnHolds());
-
-		// spreadAngle = maxSpreadAngle;
 	}
 
 	IEnumerator SpawnHolds() {
@@ -30,16 +28,14 @@ public class HoldSpawner : MonoBehaviour {
 
 	public bool spreadHoldSpawns;
 	public float distanceToNextHold = 2;
-
-	// public float maxSpreadAngle = 45;
   
-	public static float spreadAngle = 45;
+	public static float HOLD_SPREAD = 45;
 
 	Vector2 GetNextHoldVector() {
 		Quaternion rotation = Quaternion.identity;
 
 		if (spreadHoldSpawns) {
-			rotation = Quaternion.AngleAxis(Random.Range(-spreadAngle, spreadAngle), Vector3.forward);
+			rotation = Quaternion.AngleAxis(Random.Range(-HOLD_SPREAD, HOLD_SPREAD), Vector3.forward);
 		}
 
 		Vector2 nextHoldVector = new Vector2((rotation * Vector2.up * distanceToNextHold).x, distanceToNextHold);

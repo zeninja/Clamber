@@ -8,7 +8,7 @@ public class InputManager : MonoBehaviour {
 	public static bool inputJumpHeld;
 	public static bool inputJumpEnd;
 	public static float inputHorizontal;
-	public static float MAX_TILT_ANGLE = 20;
+	public static float MAX_DEVICE_TILT_ANGLE = 20;
 
 	void Update() {
 		HandleInput();
@@ -30,6 +30,7 @@ public class InputManager : MonoBehaviour {
 	void HandleKeyboardInput()
     {
         inputJumpStart  = Input.GetKeyDown(KeyCode.Space);
+        inputJumpHeld   = Input.GetKey    (KeyCode.Space);
         inputJumpEnd    = Input.GetKeyUp  (KeyCode.Space);
         inputHorizontal = Input.GetAxisRaw("Horizontal");
     }
@@ -49,7 +50,7 @@ public class InputManager : MonoBehaviour {
         }
         
         float angle = GyroToUnity(Input.gyro.attitude).eulerAngles.z;
-        float mappedAngle = Extensions.mapRangeMinMax(90 - MAX_TILT_ANGLE, 90 + MAX_TILT_ANGLE, -1, 1, angle);
+        float mappedAngle = Extensions.mapRangeMinMax(90 - MAX_DEVICE_TILT_ANGLE, 90 + MAX_DEVICE_TILT_ANGLE, -1, 1, angle);
 
         inputHorizontal = mappedAngle;
     }

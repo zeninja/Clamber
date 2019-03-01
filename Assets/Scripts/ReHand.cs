@@ -11,8 +11,9 @@ public class ReHand : MonoBehaviour
 
     public enum HandState { OnHold, Jumping };
     HandState state = HandState.OnHold;
-    // float spreadAngle;
-    bool hasStarted = false;
+    // bool hasStarted = false;
+
+    public static float SPREAD_ANGLE;
 
     // Use this for initialization
     void Start()
@@ -25,16 +26,30 @@ public class ReHand : MonoBehaviour
     void Update()
     {
         Rotate();
-        ProcessJumpInput();
+
+        if (useBetterJump)
+        {
+            BetterJump();
+        }
+        else
+        {
+            ProcessJumpInput();
+        }
+
+        SPREAD_ANGLE = HoldSpawner.HOLD_SPREAD;
     }
 
-    void OnTriggerEnter2D(Collider2D other) {
-        if (other.CompareTag("KillTrigger")) {
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("KillTrigger"))
+        {
             ReGameManager.GetInstance().Reset();
         }
 
-        if (other.CompareTag("LevelEnd")) {
-            ReGameManager.GetInstance().HandleLevelEnd();
+        if (other.CompareTag("LevelEnd"))
+        {
+            ReGameManager.GetInstance().Reset();
+            // ReGameManager.GetInstance().HandleLevelEnd();
         }
     }
 
@@ -45,7 +60,6 @@ public class ReHand : MonoBehaviour
         {
             case HandState.Jumping:
                 canJump = false;
-                CheckFirstInput();
                 break;
             case HandState.OnHold:
                 canJump = true;
@@ -56,13 +70,11 @@ public class ReHand : MonoBehaviour
     void Rotate()
     {
         float rotationAmt = InputManager.inputHorizontal;
-        rotationAmt = Extensions.mapRangeMinMax(-1, 1, -HoldSpawner.spreadAngle, HoldSpawner.spreadAngle, rotationAmt);
+        rotationAmt = Extensions.mapRangeMinMax(-1, 1, -SPREAD_ANGLE, SPREAD_ANGLE, rotationAmt);
 
         Vector3 targetRotation = new Vector3(0, 0, rotationAmt);
         transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(targetRotation), rotationSpeed * Time.deltaTime);
         currentRotation = transform.rotation.eulerAngles;
-
-        Debug.Log(currentRotation);
     }
 
 
@@ -76,11 +88,10 @@ public class ReHand : MonoBehaviour
     Hold currentHold;
     bool canJump = true;
 
+    public bool useBetterJump = false;
+
     void ProcessJumpInput()
     {
-
-
-
         if (InputManager.inputJumpStart && canJump)
         {
             Debug.Log("Jumping");
@@ -95,11 +106,36 @@ public class ReHand : MonoBehaviour
         }
     }
 
+    public float fallMultiplier = 2;
+    public float lowJumpMultiplier = 3;
+
+    void BetterJump()
+    {
+
+        if (InputManager.inputJumpStart && canJump)
+        {
+            Debug.Log("Jumping");
+            rb.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
+            SetState(HandState.Jumping);
+        }
+
+
+        if (rb.velocity.y < 0)
+        {
+            rb.velocity += Vector2.up * Physics2D.gravity * (fallMultiplier - 1) * Time.deltaTime;
+
+        }
+        else if (rb.velocity.y > 0 && !InputManager.inputJumpHeld)
+        {
+            rb.velocity += Vector2.up * Physics2D.gravity * (lowJumpMultiplier - 1) * Time.deltaTime;
+        }
+    }
+
 
     void TryToGrab()
     {
         float handRadius = GetComponent<CircleCollider2D>().radius / 2;
-        
+
         int layerMask = 1 << LayerMask.NameToLayer("Hold");
         RaycastHit2D hit = Physics2D.CircleCast(transform.position, handRadius, Vector2.zero, 0, layerMask);
 
@@ -127,20 +163,21 @@ public class ReHand : MonoBehaviour
     void OnGUI()
     {
 
-        GUI.Label(new Rect(0, 0, ScreenInfo.x, ScreenInfo.y),   "gyro attitude:   " + Input.gyro.attitude + "\n" +
+        GUI.Label(new Rect(0, 0, ScreenInfo.x, ScreenInfo.y), "gyro attitude:   " + Input.gyro.attitude + "\n" +
                                                                 "euler angles:    " + Input.gyro.attitude.eulerAngles + "\n" +
                                                                 "inputHorizontal: " + InputManager.inputHorizontal.ToString());
 
-        
+
     }
 
-    void OnDrawGizmos() {
+    void OnDrawGizmos()
+    {
         Gizmos.color = Color.white;
         Gizmos.DrawWireSphere(transform.position, GetComponent<CircleCollider2D>().radius / 2);
 
         // Vector3 toVec = 
-        Gizmos.DrawLine(transform.position, transform.position + Quaternion.AngleAxis(-HoldSpawner.spreadAngle, Vector3.back) * Vector2.up );
-        Gizmos.DrawLine(transform.position, transform.position + Quaternion.AngleAxis( HoldSpawner.spreadAngle, Vector3.back) * Vector2.up );
+        Gizmos.DrawLine(transform.position, transform.position + Quaternion.AngleAxis(-SPREAD_ANGLE, Vector3.back) * Vector2.up);
+        Gizmos.DrawLine(transform.position, transform.position + Quaternion.AngleAxis(SPREAD_ANGLE, Vector3.back) * Vector2.up);
 
 
         Gizmos.color = Color.green;
