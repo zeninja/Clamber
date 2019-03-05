@@ -5,7 +5,20 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour {
 
-	// public static bool showDebugUI;
+	bool showSettings;
+	bool showStats;
 
-	public TiltDisplay TiltDisplay;
+	void Update() {
+		// if() {
+
+		// }
+	}
+
+	public void InvertShowStats() {
+		showStats = !showStats;
+	}
+
+	public void InvertShowSettings() {
+		showSettings = !showSettings;
+	}
 }

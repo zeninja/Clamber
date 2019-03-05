@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4128783201257084}
   - component: {fileID: 212694427544814940}
   - component: {fileID: 114273394896647482}
+  - component: {fileID: 114946099166027574}
   m_Layer: 0
   m_Name: Hand
   m_TagString: Untagged
@@ -52,10 +53,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa62e262b96c7874cacb93b056d4559a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpDistance: 2
-  jumpDuration: 0.2
-  handRadius: 0.5
-  currentHold: {fileID: 0}
+--- !u!114 &114946099166027574
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1594747461920156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb11f5c819a09b242afd55fd1cbe3d64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationSpeed: 5
+  jumpForce: 0
+  useBetterJump: 0
+  fallMultiplier: 2
+  lowJumpMultiplier: 3
 --- !u!212 &212694427544814940
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -90,7 +103,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: b8dd5377ef042934890fd4bb428d6284, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

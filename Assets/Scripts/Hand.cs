@@ -5,119 +5,234 @@ using UnityEngine;
 public class Hand : MonoBehaviour
 {
 
-    void Start()
+    public Color handColor;
+
+    private static Hand instance;
+    public static Hand GetInstance()
     {
-        lastJumpPos = transform.position;
+        return instance;
     }
 
-    public float rotationSpeed = 5f;
-
-	enum HandState { onHold, inAir };
-	HandState state = HandState.onHold;
-
-    void Update()
-    {	
-		#if UNITY_EDITOR
-        float inputHorizontal = Input.GetAxisRaw("Horizontal");
-		#elif UNITY_IOS
-		float inputHorizontal = Input.acceleration.z;
-		#endif
-
-        if (inputHorizontal != 0)
+    void Awake()
+    {
+        if (instance == null)
         {
-            transform.Rotate(new Vector3(0, 0, -rotationSpeed * inputHorizontal));
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            StartCoroutine(Jump());
-        }
-
-        if (Input.GetKeyUp(KeyCode.Space))
-        {
-            StopCoroutine(Jump());
-            EndJump();
-        }
-
-        if (currentHold != null)
-        {
-            transform.Translate(Vector2.down * currentHold.fallSpeed * Time.deltaTime, Space.World);
-            lastJumpPos = transform.position;
-
-            GetComponent<SpriteRenderer>().color = Color.Lerp(GetComponent<SpriteRenderer>().color, Color.white, Time.time - lastJumpTime);
+            instance = this;
         }
         else
         {
-            transform.position = lastJumpPos + jumpVector;
-            lastJumpTime = Time.time;
+            if (instance != this)
+            {
+                Destroy(this.gameObject);
+            }
         }
-
     }
 
-	void FixedUpdate() {
-		
-	}
+    public float rotationSpeed = 5;
 
-    float lastJumpTime;
-    // public float jumpDistance = 3;
-    Vector2 jumpVector;
+    Rigidbody2D rb;
 
-    Vector2 lastJumpPos;
+    public enum HandState { OnHold, Jumping };
+    public static HandState state = HandState.OnHold;
+    bool hasStarted = false;
 
-    public float jumpDuration = .2f;
-    bool jumping;
-
-    public IEnumerator Jump()
+    // Use this for initialization
+    void Start()
     {
-        jumping = true;
-        currentHold = null;
+        rb = GetComponent<Rigidbody2D>();
+        SetColor();
+    }
 
-        float t = 0;
-        float d = jumpDuration;
+    void SetColor() {
+        GetComponent<SpriteRenderer>().color = handColor;
+    }
 
-        while (t < d)
+
+    // Update is called once per frame
+    void Update()
+    {
+        Rotate();
+
+        if (useBetterJump)
         {
-            float p = Mathf.Clamp01(t / d);
-            t += Time.fixedDeltaTime;
-            jumpVector = transform.up * GameManager.distanceToNextHold * EZEasings.SmoothStop3(p);
-            yield return new WaitForFixedUpdate();
+            BetterJump();
+        }
+        else
+        {
+            ProcessJumpInput();
         }
     }
 
-    void EndJump()
+    void OnTriggerEnter2D(Collider2D other)
     {
-        jumpVector = Vector2.zero;
-        lastJumpPos = transform.position;
-        jumping = false;
-		CheckForOverlap();
+        if (other.CompareTag("KillTrigger"))
+        {
+            GameManager.GetInstance().Reset();
+        }
+
+        if (other.CompareTag("LevelEnd"))
+        {
+            // GameManager.GetInstance().Reset();
+            GameManager.GetInstance().HandleLevelEnd();
+        }
     }
 
-    public float handRadius = .5f;
-
-    void CheckForOverlap()
+    void SetState(HandState newState)
     {
-        RaycastHit2D hit = Physics2D.CircleCast(transform.position, handRadius, Vector2.zero);
+        state = newState;
+        switch (state)
+        {
+            case HandState.Jumping:
+                canJump = false;
+                CheckFirstInput();
+                break;
+            case HandState.OnHold:
+                canJump = true;
+                break;
+        }
+    }
+
+    public static bool OnHold()
+    {
+        return state == HandState.OnHold;
+    }
+
+    public static bool Jumping()
+    {
+        return state == HandState.Jumping;
+    }
+
+    void Rotate()
+    {
+        float angle = InputManager.inputHorizontal * LevelManager.HOLD_SPREAD;
+
+        Vector3 targetRotation = new Vector3(0, 0, angle);
+        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(targetRotation), rotationSpeed * Time.deltaTime);
+        currentRotation = transform.rotation.eulerAngles;
+    }
+
+    void CheckFirstInput()
+    {
+        // TEMP
+        // Replace this with better code in the game manager or something
+        if (!hasStarted)
+        {
+            hasStarted = true;
+            GameManager.GetInstance().StartBurn();
+        }
+    }
+
+
+    public static Vector3 currentRotation;
+
+    public float jumpForce;
+
+    Hold currentHold;
+    bool canJump = true;
+
+    public bool useBetterJump = false;
+
+    void ProcessJumpInput()
+    {
+        if (InputManager.inputJumpStart && canJump)
+        {
+            // Debug.Log("Jumping");
+            rb.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
+            rb.gravityScale = 1;
+            SetState(HandState.Jumping);
+        }
+
+        if (InputManager.inputJumpEnd)
+        {
+            TryToGrab();
+        }
+    }
+
+    public float fallMultiplier = 2;
+    public float lowJumpMultiplier = 3;
+
+    void BetterJump()
+    {
+
+        if (InputManager.inputJumpStart && canJump)
+        {
+            // Debug.Log("Jumping");
+            rb.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
+            SetState(HandState.Jumping);
+        }
+
+
+        if (rb.velocity.y < 0)
+        {
+            rb.velocity += Vector2.up * Physics2D.gravity * (fallMultiplier - 1) * Time.deltaTime;
+
+        }
+        else if (rb.velocity.y > 0 && !InputManager.inputJumpHeld)
+        {
+            rb.velocity += Vector2.up * Physics2D.gravity * (lowJumpMultiplier - 1) * Time.deltaTime;
+        }
+    }
+
+
+    void TryToGrab()
+    {
+        float handRadius = GetComponent<CircleCollider2D>().radius / 2;
+
+        int layerMask = 1 << LayerMask.NameToLayer("Hold");
+        RaycastHit2D hit = Physics2D.CircleCast(transform.position, handRadius, Vector2.zero, 0, layerMask);
 
         if (hit)
         {
-            if (hit.collider.CompareTag("Hold"))
-            {
-                currentHold = hit.collider.gameObject.GetComponent<Hold>();
-				currentHold.GetGrabbed();
-            }
-            GetComponent<SpriteRenderer>().color = Color.green;
+            // Grab succeeded
+            HandleGrabSuccess(hit);
         }
         else
         {
-            GetComponent<SpriteRenderer>().color = Color.red;
+            // Grab failed
+            HandleGrabFailed();
         }
     }
 
-    public Hold currentHold;
-    // Hold nextHold;
-
-    public void SetFirstHold(Hold h)
+    void HandleGrabSuccess(RaycastHit2D hit)
     {
-        currentHold = h;
+        currentHold = hit.collider.gameObject.GetComponent<Hold>();
+        currentHold.GetGrabbed();
+
+        rb.gravityScale = 0;
+        rb.velocity = Vector2.zero;
+
+        SetState(HandState.OnHold);
     }
+
+    void HandleGrabFailed()
+    {
+
+    }
+
+    public void HandleLevelEnd()
+    {
+        rb.gravityScale = 0;
+    }
+
+    // public float handRadius;
+
+    // void OnGUI()
+    // {
+
+    //     // GUI.Label(new Rect(0, 0, ScreenInfo.x, ScreenInfo.y), "gyro attitude:   " + Input.gyro.attitude + "\n" +
+    //     //                                                       "euler angles:    " + Input.gyro.attitude.eulerAngles + "\n" +
+    //     //                                                       "inputHorizontal: " + InputManager.inputHo rizontal.ToString());
+
+
+    // }
+
+    // void OnDrawGizmos()
+    // {
+    //     Gizmos.color = Color.white;
+    //     Gizmos.DrawWireSphere(transform.position, GetComponent<CircleCollider2D>().radius / 2);
+
+    //     Gizmos.color = Color.green;
+    //     Gizmos.DrawLine(transform.position, transform.position + transform.up);
+    // }
+
 }

@@ -1,78 +1,88 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using TMPro;
 
-public class GameManager : MonoBehaviour {
+public class GameManager : MonoBehaviour
+{
 
-	public Hold hold; 
-	public float timeBtwnSpawns = 1;
-	float nextSpawnTime;
+    public static float burnDuration;
 
-	public static float holdFallSpeed = 3f;
-	Hold firstHold;
-	Hold lastHold;
+    private static GameManager instance;
+    public static GameManager GetInstance()
+    {
+        return instance;
+    }
 
-	List<Hold> holds;
+    public enum GameState { PreBurn, Burn, PostBurn }
+    GameState state = GameState.PreBurn;
 
-	public  Vector2 startHoldPos;
-	public  Vector2 nextHoldPos;
+    void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            if (this != instance)
+            {
+                Destroy(this.gameObject);
+            }
+        }
+    }
 
-	[SerializeField]
-	Vector2 lastHoldPos;
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.R) || Input.touchCount == 3)
+        {
+            Reset();
+        }
 
-	void Start() {
-		holds = new List<Hold>();
-		nextHoldPos = startHoldPos;
-	}
+		CheckState();
+    }
 
-	void Update () {
-		if(Time.time > nextSpawnTime) {
-			SpawnHold();
-			nextSpawnTime = Time.time + timeBtwnSpawns;
+	void SetState(GameState newState) {
+		state = newState;
+
+		switch(state) {
+			case GameState.PostBurn:
+				Hand.GetInstance().HandleLevelEnd();
+				break;
 		}
 
-		if(lastHold != null) {
-			lastHoldPos = lastHold.transform.position;
-			nextHoldPos = lastHoldPos + (Vector2)nextHoldVector;
-		}
 	}
 
-	public Vector3 nextHoldVector;
-
-	public static float distanceToNextHold = 2;
-	public bool spreadHoldSpawns;
-
-	void SpawnHold() {
-		Hold h = Instantiate(hold, nextHoldPos, Quaternion.identity);
-		h.fallSpeed = holdFallSpeed;
-
-		Quaternion rotation = Quaternion.identity;
-		
-		if(spreadHoldSpawns) {
-			rotation = Quaternion.AngleAxis(Random.Range(-40, 40), Vector3.forward);
-		}
-
-		nextHoldVector = rotation * Vector2.up * distanceToNextHold;
-		AddHoldToList(h);
-
-		if (!hasSpawnedFirstHold) {
-			firstHold = h;
-			hasSpawnedFirstHold = true;
-			SpawnPlayer(firstHold);
-		}
+	void CheckState() {
+        switch (state)
+        {
+            case GameState.Burn:
+                burnDuration = Time.time - startTime;
+                break;
+        }
 	}
 
-	public Hand hand;
+    public void StartBurn() {
+        startTime = Time.time;
+        SetState(GameState.Burn);
+    }
 
-	void SpawnPlayer(Hold startHold) {
-		Hand h = Instantiate(hand, startHold.transform.position, Quaternion.identity);
-		h.SetFirstHold(firstHold);
-	}
+    public void Reset()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
 
-	void AddHoldToList(Hold h) {
-		holds.Add(h);
-		lastHold = h;
-	}
+    public void HandleLevelEnd()
+    {
+        EndTimer();
+		SetState(GameState.PostBurn);
+    }
 
-	bool hasSpawnedFirstHold;
+    float startTime, endTime;
+
+    public void EndTimer()
+    {
+        endTime = Time.time;
+    }
 }
