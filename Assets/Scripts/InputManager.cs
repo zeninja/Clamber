@@ -9,7 +9,6 @@ public class InputManager : MonoBehaviour {
 	public static bool inputJumpEnd;
 	public static float inputHorizontal;
 
-
     public static float MIN_TILT_ANGLE = 15;
 	public static float DEVICE_TILT_ANGLE = 20;
     public static float MAX_TILT_ANGLE = 45;
@@ -82,5 +81,12 @@ public class InputManager : MonoBehaviour {
     Quaternion GyroToUnity(Quaternion q)
     {
         return new Quaternion(q.x, q.y, -q.z, -q.w);
+    }
+
+    public static void AdjustDeviceAngle() {
+        DEVICE_TILT_ANGLE += 5;
+        if (DEVICE_TILT_ANGLE > MAX_TILT_ANGLE) {
+            DEVICE_TILT_ANGLE = MIN_TILT_ANGLE;
+        }
     }
 }

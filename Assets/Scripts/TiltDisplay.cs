@@ -4,10 +4,8 @@ using UnityEngine;
 
 public class TiltDisplay : MonoBehaviour {
 	public Transform followTarget;
-	public GameObject left, right, fwd;
-
-
-	// GameObject[] children;
+	public GameObject game_left, game_right, game_fwd;
+	public GameObject dvc_left, dvc_right, dvc_fwd;
 
 	void Start() {
 		AdjustTiltDisplay();
@@ -18,16 +16,23 @@ public class TiltDisplay : MonoBehaviour {
 	}
 
 	void AdjustTiltDisplay() {
-		Vector3 leftTilt  = new Vector3(0, 0, -LevelManager.HOLD_SPREAD ); 
-		Vector3 rightTilt = new Vector3(0, 0,  LevelManager.HOLD_SPREAD );
-		Quaternion forward   = Hand.GetInstance().transform.rotation;
+		Vector3 game_spreadL = new Vector3(0, 0, -LevelManager.HOLD_SPREAD ); 
+		Vector3 game_spreadR = new Vector3(0, 0,  LevelManager.HOLD_SPREAD );
+		Quaternion forward    = Hand.GetInstance().transform.rotation;
 
-		left .GetComponent<RectTransform>().rotation = Quaternion.Euler(leftTilt);
-		right.GetComponent<RectTransform>().rotation = Quaternion.Euler(rightTilt);
-		fwd  .transform.rotation = forward;
+		game_left .GetComponent<RectTransform>().rotation = Quaternion.Euler(game_spreadL);
+		game_right.GetComponent<RectTransform>().rotation = Quaternion.Euler(game_spreadR);
+		game_fwd  .transform.rotation = forward;
 
-		// left .SetActive(Hand.OnHold());
-		// right.SetActive(Hand.OnHold());
+
+		Vector3 dvc_spreadL   = new Vector3(0, 0, -InputManager.DEVICE_TILT_ANGLE ); 
+		Vector3 dvc_spreadR   = new Vector3(0, 0,  InputManager.DEVICE_TILT_ANGLE );
+		Vector3 dvc_fwdRot    = new Vector3(0, 0,  InputManager.inputHorizontal * InputManager.DEVICE_TILT_ANGLE );
+
+		dvc_left .GetComponent<RectTransform>().rotation = Quaternion.Euler(dvc_spreadL);
+		dvc_right.GetComponent<RectTransform>().rotation = Quaternion.Euler(dvc_spreadR);
+		dvc_fwd  .GetComponent<RectTransform>().rotation = Quaternion.Euler(dvc_fwdRot);
+
 	}
 
 	void LateUpdate() {

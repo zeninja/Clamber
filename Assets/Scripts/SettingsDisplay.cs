@@ -11,7 +11,7 @@ public class SettingsDisplay : MonoBehaviour {
 	TextMeshProUGUI   title;
 	TextMeshProUGUI[] tmp_labels;
 	TextMeshProUGUI[] tmp_values;
-	public TextMeshProUGUI act_values;
+	public TextMeshProUGUI values_TEMP; // temp, should switch to line by line TMP
 	public TextMeshProUGUI   input;
 
 
@@ -25,31 +25,37 @@ public class SettingsDisplay : MonoBehaviour {
 		// SpawnText();
 	}
 
-	void SpawnText() {
-		for (int i = 0; i < labels.Length; i++) {
-			tmp_labels[i] = new GameObject().AddComponent<TextMeshProUGUI>();
-			tmp_values[i] = new GameObject().AddComponent<TextMeshProUGUI>();
-		}
-	}
+	// void SpawnText() {
+	// 	for (int i = 0; i < labels.Length; i++) {
+	// 		tmp_labels[i] = new GameObject().AddComponent<TextMeshProUGUI>();
+	// 		tmp_values[i] = new GameObject().AddComponent<TextMeshProUGUI>();
+	// 	}
+	// }
 
-	void SelectText(int index) {
-		for (int i = 0; i < labels.Length; i++) {
-			tmp_labels[i].fontStyle = index == i ? FontStyles.Underline : FontStyles.Normal;
-			tmp_values[i].fontStyle = index == i ? FontStyles.Underline : FontStyles.Normal;
-		}
-	}
+	// void SelectText(int index) {
+	// 	for (int i = 0; i < labels.Length; i++) {
+	// 		tmp_labels[i].fontStyle = index == i ? FontStyles.Underline : FontStyles.Normal;
+	// 		tmp_values[i].fontStyle = index == i ? FontStyles.Underline : FontStyles.Normal;
+	// 	}
+	// }
 
 	UIBlock block;
 
 	void Update() {
-		HandleInput(block.processedInput);
+		// HandleInput(block.processedInput);
+		HandleInput();
 	}
 
-	public void HandleInput(float currentInput) {
+	public void HandleInput() {
 		// show input in the bottom right of box
-		input.text = "\n\n\n\n" + currentInput;
-		InputManager.DEVICE_TILT_ANGLE = Mathf.Clamp(InputManager.DEVICE_TILT_ANGLE += currentInput, InputManager.MIN_TILT_ANGLE, InputManager.MAX_TILT_ANGLE);
-		act_values.text = "\n" + InputManager.DEVICE_TILT_ANGLE.ToString();
+		// input.text = "\n\n\n\n" + currentInput;
 
+
+	}
+
+	public void IncrementDeviceAngle() {
+		InputManager.AdjustDeviceAngle();
+		// InputManager.DEVICE_TILT_ANGLE = Mathf.Clamp(InputManager.DEVICE_TILT_ANGLE += currentInput, InputManager.MIN_TILT_ANGLE, InputManager.MAX_TILT_ANGLE);
+		values_TEMP.text = "\n" + InputManager.DEVICE_TILT_ANGLE.ToString();
 	}
 }

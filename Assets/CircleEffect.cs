@@ -36,7 +36,7 @@ public class CircleEffect : MonoBehaviour
     float adjustedRadius;
 
     void CalculateRadius() {
-        adjustedRadius = radius - lineWidth / 2;
+        adjustedRadius = Mathf.Clamp(radius - (lineWidth / 2), 0, radius / 2);
     }
 
     void CreatePoints()

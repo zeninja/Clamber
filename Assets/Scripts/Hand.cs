@@ -5,6 +5,7 @@ using UnityEngine;
 public class Hand : MonoBehaviour
 {
 
+    GrabDisplay grabDisplay;
     public Color handColor;
 
     private static Hand instance;
@@ -39,7 +40,8 @@ public class Hand : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
+        rb          = GetComponent<Rigidbody2D>();
+        grabDisplay = GetComponent<GrabDisplay>();
         SetColor();
     }
 
@@ -88,6 +90,7 @@ public class Hand : MonoBehaviour
                 break;
             case HandState.OnHold:
                 canJump = true;
+                
                 break;
         }
     }
@@ -139,7 +142,12 @@ public class Hand : MonoBehaviour
             // Debug.Log("Jumping");
             rb.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
             rb.gravityScale = 1;
+
             SetState(HandState.Jumping);
+        }
+
+        if (InputManager.inputJumpHeld) {
+            grabDisplay.HandleJump();
         }
 
         if (InputManager.inputJumpEnd)
@@ -201,38 +209,24 @@ public class Hand : MonoBehaviour
         rb.gravityScale = 0;
         rb.velocity = Vector2.zero;
 
+        grabDisplay.HandleGrab();
+
         SetState(HandState.OnHold);
     }
 
     void HandleGrabFailed()
     {
+        // should probably.. add some mechanics to this...
+        // grab "cooldown"?
+        // gets worse the more grab attempts you miss?
+        // grabDisplay.HandleGrabFailed();
 
+        grabDisplay.HandleGrab();
     }
 
     public void HandleLevelEnd()
     {
         rb.gravityScale = 0;
     }
-
-    // public float handRadius;
-
-    // void OnGUI()
-    // {
-
-    //     // GUI.Label(new Rect(0, 0, ScreenInfo.x, ScreenInfo.y), "gyro attitude:   " + Input.gyro.attitude + "\n" +
-    //     //                                                       "euler angles:    " + Input.gyro.attitude.eulerAngles + "\n" +
-    //     //                                                       "inputHorizontal: " + InputManager.inputHo rizontal.ToString());
-
-
-    // }
-
-    // void OnDrawGizmos()
-    // {
-    //     Gizmos.color = Color.white;
-    //     Gizmos.DrawWireSphere(transform.position, GetComponent<CircleCollider2D>().radius / 2);
-
-    //     Gizmos.color = Color.green;
-    //     Gizmos.DrawLine(transform.position, transform.position + transform.up);
-    // }
 
 }

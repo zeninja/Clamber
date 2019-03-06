@@ -4,45 +4,52 @@ using UnityEngine;
 
 public class GrabDisplay : MonoBehaviour {
 
-
-	public float holdRadius;
-	public float jumpRadius;
+	public CircleEffect circle;
+	public Transform followTarget;
+	public float jumpRadius = 3, grabRadius = .6f;
 	float targetRadius;
-	float ringRadius;
-
-	RingEffect ring;
+	public float grabDuration = .125f;
 
 	void Start() {
-		ring = GetComponentInChildren<RingEffect>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		SetRadius();
-		ApplyRadius();
+
 	}
 
-
-
-	public Transform followTarget;
+	void Update() {
+		AdjustRadius();
+	}
 
 	void LateUpdate() {
 		transform.position = followTarget.transform.position;
 	}
 
-	void SetRadius() {
-
-		if(Hand.OnHold()) {
-			targetRadius = holdRadius;
-		} else 
-		if(Hand.Jumping()) {
-			targetRadius = jumpRadius;
-		}
-
-		ringRadius = targetRadius; //Mathf.Lerp(circleRadius, targetRadius, Time.deltaTime);
+	void AdjustRadius() {
+		circle.radius = targetRadius;
 	}
 
-	void ApplyRadius() {
-		// ring.radius = ringRadius;
+	public void HandleJump() {
+		targetRadius = jumpRadius;
+	}
+
+	public void HandleGrab() {
+		// StopCoroutine(ShowGrab());
+		StartCoroutine(ShowGrab());
+	}
+
+	IEnumerator ShowGrab() {
+		float t = 0;
+		float d = grabDuration;
+
+		while(t < d) {
+			float p = Mathf.Clamp01(t / d);
+			t += Time.fixedDeltaTime;
+
+			targetRadius = grabRadius + (jumpRadius - grabRadius) *  (1 - EZEasings.SmoothStop5(p));
+
+			yield return new WaitForFixedUpdate();
+		}
+	}
+
+	public void HandleGrabFailed() {
+		// do nothing right now...
 	}
 }

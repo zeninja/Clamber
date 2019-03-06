@@ -4,10 +4,6 @@ using UnityEngine;
 
 public class UIBlock : MonoBehaviour
 {
-
-    // public enum BlockState { selected, off };
-    // BlockState state = BlockState.off;
-
     Collider2D c2D;
 
     // Use this for initialization
@@ -27,7 +23,7 @@ public class UIBlock : MonoBehaviour
     void Update()
     {
         HandleTouchInput();
-        HandleMouseInput();
+        // HandleMouseInput();
     }
 
     void HandleTouchInput()
@@ -57,12 +53,15 @@ public class UIBlock : MonoBehaviour
                     // Check where the finger is
                     diff = Extensions.ScreenToWorld(Input.touches[i].position);
                     // ProcessDrag(diff);
-                    settings.HandleInput(diff.x);
+                    // settings.HandleInput(diff.x);
+                    // settings.HandleInput();
                 }
 
             }
         }
     }
+
+    bool validStart;
 
     void HandleMouseInput()
     {
@@ -70,10 +69,16 @@ public class UIBlock : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            startPoint = Input.mousePosition;
+            Vector2 touchPos = Extensions.ScreenToWorld(Input.mousePosition);
+            if(Physics2D.OverlapPoint(touchPos) == c2D) {
+                validStart = true;
+                startPoint = Input.mousePosition;
+            } else {
+                validStart = false;
+            }
         }
 
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0) && validStart)
         {
             diff = (Vector2)Input.mousePosition - startPoint;
         }

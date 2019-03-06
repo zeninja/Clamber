@@ -9,9 +9,7 @@ public class UIManager : MonoBehaviour {
 	bool showStats;
 
 	void Update() {
-		// if() {
 
-		// }
 	}
 
 	public void InvertShowStats() {
