@@ -20,7 +20,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4128783201257084}
   - component: {fileID: 212694427544814940}
-  - component: {fileID: 114273394896647482}
   - component: {fileID: 114946099166027574}
   m_Layer: 0
   m_Name: Hand
@@ -42,17 +41,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114273394896647482
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1594747461920156}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa62e262b96c7874cacb93b056d4559a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114946099166027574
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -64,6 +52,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb11f5c819a09b242afd55fd1cbe3d64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  handColor: {r: 0, g: 0, b: 0, a: 0}
   rotationSpeed: 5
   jumpForce: 0
   useBetterJump: 0

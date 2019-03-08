@@ -55,6 +55,8 @@ public class Hand : MonoBehaviour
     {
         Rotate();
 
+        if(SettingsDisplay.active) { return; }
+
         if (useBetterJump)
         {
             BetterJump();

@@ -2,35 +2,55 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Hold : MonoBehaviour {
+public class Hold : MonoBehaviour
+{
 
-	public float fallSpeed;
+    SpriteRenderer sp;
+    public Color holdColor;
+    public Color flashColor;
 
-	public Color holdColor;
-	public Color flashColor;
-	
+    public float lifetime = .5f;
+    public float delayBeforeReactivation = .25f;
 
-	// Update is called once per frame
-	void Update () {
-		transform.Translate(Vector2.down * fallSpeed * Time.deltaTime);
+    void Start()
+    {
+        sp = GetComponent<SpriteRenderer>();
+    }
 
-		GetComponent<SpriteRenderer>().color = Color.Lerp(GetComponent<SpriteRenderer>().color, holdColor, Time.time - grabTime);
+    public void GetGrabbed()
+    {
+        sp.color = flashColor;
+        StartCoroutine(ProcessHold());
+    }
 
-	}
+	public float elapsedPct;
 
-	void OnTriggerEnter2D(Collider2D other) {
-		if (other.CompareTag("KillTrigger")) {
-			// Destroy(gameObject);
-			Debug.Log("Game over");
-			Destroy(gameObject);
-			// gameObject.SetActive(false);
-		}
-	}
+    public IEnumerator ProcessHold()
+    {
+        float t1 = 0;
+        float d1 = lifetime;
 
-	float grabTime;
+        while (t1 < d1)
+        {
+            elapsedPct = Mathf.Clamp01(t1 / d1);
+			sp.color = Color.Lerp(sp.color, holdColor, elapsedPct);
+            t1 += Time.fixedDeltaTime;
+            yield return new WaitForFixedUpdate();
+        }
 
-	public void GetGrabbed() {
-		grabTime = Time.time;
-		GetComponent<SpriteRenderer>().color = flashColor;
-	}
+        float t2 = 0;
+        float d2 = delayBeforeReactivation;
+
+        while (t2 < d2)
+        {
+            float p = Mathf.Clamp01(t2 / d2);
+            t2 += Time.fixedDeltaTime;
+            yield return new WaitForFixedUpdate();
+        }
+    }
+
+
+
+
+    public bool canHold;
 }
