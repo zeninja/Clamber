@@ -134,6 +134,17 @@ public class Hand : MonoBehaviour
 
     public float jumpForce;
 
+    public float MAX_JUMP_FORCE = 250;
+    public float MIN_JUMP_FORCE = 200;
+
+    public void AdjustJumpForce() {
+        jumpForce++;
+        if (jumpForce > MAX_JUMP_FORCE) {
+            jumpForce = MIN_JUMP_FORCE;
+        }
+        
+    }
+
     Hold currentHold;
     bool canJump = true;
 
@@ -141,6 +152,7 @@ public class Hand : MonoBehaviour
 
     void ProcessJumpInput()
     {
+        jumpForce = GlobalSettings.GameSettings.jump_force;
 
         switch (GlobalSettings.GameSettings.use_alt_ctrl_scheme)
         {

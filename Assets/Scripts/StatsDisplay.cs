@@ -22,7 +22,7 @@ public class StatsDisplay : MonoBehaviour {
 							GyroToUnity(Input.gyro.attitude).eulerAngles + "\n" + 
 							InputManager.roll.ToString("F2")			 + "\n" +
 							Hand.currentRotation.z.ToString("F2")		 + "\n" +
-							GameManager.burnDuration.ToString("F3");
+							GameManager.burnDuration.ToString("F3");	
 
 		tmp_Text.text = statsText;
 	}
