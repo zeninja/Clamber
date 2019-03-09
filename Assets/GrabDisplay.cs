@@ -43,7 +43,7 @@ public class GrabDisplay : MonoBehaviour {
 			float p = Mathf.Clamp01(t / d);
 			t += Time.fixedDeltaTime;
 
-			targetRadius = grabRadius + (jumpRadius - grabRadius) *  (1 - EZEasings.SmoothStop5(p));
+			targetRadius = grabRadius + (jumpRadius - grabRadius) *  (1 - EZEasings.SmoothStop3(p));
 
 			yield return new WaitForFixedUpdate();
 		}

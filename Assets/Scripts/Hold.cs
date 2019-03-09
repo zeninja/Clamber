@@ -30,6 +30,8 @@ public class Hold : MonoBehaviour
         float t1 = 0;
         float d1 = lifetime;
 
+        canHold = true;
+
         while (t1 < d1)
         {
             elapsedPct = Mathf.Clamp01(t1 / d1);
@@ -41,12 +43,16 @@ public class Hold : MonoBehaviour
         float t2 = 0;
         float d2 = delayBeforeReactivation;
 
+        canHold = false;
+
         while (t2 < d2)
         {
             float p = Mathf.Clamp01(t2 / d2);
             t2 += Time.fixedDeltaTime;
             yield return new WaitForFixedUpdate();
         }
+
+        canHold = true;
     }
 
 

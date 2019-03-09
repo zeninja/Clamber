@@ -6,11 +6,10 @@ using System.Linq;
 
 public class SettingsDisplay : MonoBehaviour
 {
+    public TextMeshProUGUI tmp_labels;
+    public TextMeshProUGUI tmp_values;
 
-    // public Dictionary<string, string> stats = new Dictionary<string, string>();
-    // TextMeshProUGUI title;
-    TextMeshProUGUI[] tmp_labels;
-    TextMeshProUGUI[] tmp_values;
+    string[] labels, values;
 
 
     public static bool active;
@@ -22,68 +21,87 @@ public class SettingsDisplay : MonoBehaviour
 
     void Start()
     {
-
-        tmp_labels = new TextMeshProUGUI[2];
-        tmp_values = new TextMeshProUGUI[2];
+        labels = new string[3];
+        values = new string[3];
         SpawnText();
     }
 
-    void SpawnText() {
-    	for (int i = 0; i < tmp_labels.Length; i++) {
-    		tmp_labels[i] = new GameObject().AddComponent<TextMeshProUGUI>();
-    		tmp_values[i] = new GameObject().AddComponent<TextMeshProUGUI>();
+    void SpawnText()
+    {
+        labels[0] = "max_dvc_tilt_angle:";
+        labels[1] = "align_view_to_dvc:";
+        labels[2] = "use_alt_ctrls_scheme:";
 
-            tmp_labels[i].transform.parent = transform;
-            tmp_values[i].transform.parent = transform;
-    	}
-        tmp_labels[0].text = "align_view_to_dvc:";
-        tmp_labels[1].text = "max_dvc_tilt_angle:";
+        string labelText = "\n";
 
+        for (int i = 0; i < labels.Length; i++) {
+            labelText += labels[i] + "\n";
+        }
+        tmp_labels.text = labelText;
 
-        SetText();
+        SetValueText();
     }
-
-    // void SelectText(int index) {
-    // 	for (int i = 0; i < labels.Length; i++) {
-    // 		tmp_labels[i].fontStyle = index == i ? FontStyles.Underline : FontStyles.Normal;
-    // 		tmp_values[i].fontStyle = index == i ? FontStyles.Underline : FontStyles.Normal;
-    // 	}
-    // }
 
     float nextAngTime;
-	float nextAngDelay = .125f;
+    float nextAngDelay = .125f;
 
-    void SetText() {
-        // for(int i = 0; i < tmp_labels.Length; i++) {
-            tmp_values[0].text = GlobalSettings.GameSettings.max_dvc_tilt_angle.ToString();
-            tmp_values[1].text = GlobalSettings.GameSettings.max_dvc_tilt_angle.ToString();
-        // }
+    void SetValueText()
+    {
+        values[0] = GlobalSettings.GameSettings.max_dvc_tilt_angle.ToString();
+        values[1] = GlobalSettings.GameSettings.align_view_to_dvc.ToString();
+        values[2] = GlobalSettings.GameSettings.use_alt_ctrl_scheme.ToString();
+
+
+        string valueText = "\n";
+        for(int i = 0; i < values.Length; i++) {
+            valueText += values[i] + "\n";
+        }
+
+        tmp_values.text = valueText;
+
     }
 
-    public void InvertActive() {
+    public void InvertActive()
+    {
         active = !active;
         SetState();
     }
 
+    public void InvertUseDeviceDirection() {
+        if (!active) { return; }
+        GlobalSettings.GameSettings.align_view_to_dvc = !GlobalSettings.GameSettings.align_view_to_dvc;
+        SetValueText();
+    } 
+
     public void IncrementDeviceAngle()
     {
-        if(!active) { return; }
+        if (!active) { return; }
 
         if (Time.time > nextAngTime)
         {
             InputManager.AdjustDeviceAngle();
+
             GlobalSettings.GameSettings.max_dvc_tilt_angle = (int)InputManager.DEVICE_TILT_ANGLE;
-			nextAngTime = Time.time + nextAngDelay;
+            GlobalSettings.UpdateSavedValues();
+
+            nextAngTime = Time.time + nextAngDelay;
         }
 
-        SetText();
+        SetValueText();
     }
 
+    public void InvertUseAltCtrlScheme() {
+        GlobalSettings.GameSettings.use_alt_ctrl_scheme = !GlobalSettings.GameSettings.use_alt_ctrl_scheme;
+        GlobalSettings.UpdateSavedValues();
+        SetValueText();
+    }
 
     public Vector2 activePos, inactivePos, targetPos;
 
-    void SetState() {
-        switch(active) {
+    void SetState()
+    {
+        switch (active)
+        {
             case true:
                 targetPos = activePos;
                 settingsButton.GetComponent<UnityEngine.UI.Image>().color = settingsOn;
@@ -93,11 +111,5 @@ public class SettingsDisplay : MonoBehaviour
                 settingsButton.GetComponent<UnityEngine.UI.Image>().color = settingsOff;
                 break;
         }
-
-        // settingsButton .GetComponentInParent(!active);
-        // dvc_angleButton.SetActive(active);
     }
-    
-
-    
 }

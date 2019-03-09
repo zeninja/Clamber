@@ -5,54 +5,56 @@ using UnityEngine;
 public class HoldOutline : MonoBehaviour {
 
 	Hold hold;
-	LineRenderer line;
+	// List<LineRenderer> lines;
 
 	// Use this for initialization
 	void Start () {
 		hold = GetComponentInParent<Hold>();
-		line = GetComponent<LineRenderer>();
 		tracedPositions = new List<Vector3>();
 		tracedPositions = GetColliderPoints();
-
+		GenerateLines(tracedPositions);
 	}
 
 	List<Vector3> tracedPositions;
-	Vector3[] linePositions;
-
 	int NUM_POSITIONS = 300;
 
 	List<Vector3> GetColliderPoints() {
-		Vector2[] pts   = hold.GetComponent<PolygonCollider2D>().points;
-		Vector3[] ptsVec3 = new Vector3[pts.Length];
-
-		for (int i = 0; i < pts.Length; i++) {
-			ptsVec3[i] = new Vector3(pts[i].x, pts[i].y, 0);
-		}
-
+		Vector2[]     pts   = hold.GetComponent<PolygonCollider2D>().points;
 		List<Vector3> final = new List<Vector3>();
 
-		// for(int x = 0; x < pts.Length; x++) {
-		// 	for(int i = 0; i < NUM_POSITIONS / pts.Length; i++) {
-				
-		// 		Vector3 pos1 = ptsVec3[x];
-		// 		Vector3 pos2 = ptsVec3[(x + 1) % pts.Length];
-
-		// 		final[i] = Vector3.Lerp(pos1, pos2, (float)i / (float)NUM_POSITIONS);
-		// 	}
-		// }
-
-
+		for (int i = 0; i < pts.Length; i++) {
+			final.Add(new Vector3(pts[i].x, pts[i].y, 0));
+		}
 		return final;
 	}
 
-	void Update() {
-		// SetLinePositions();
-	}
+	public float width;
 
-	void SetLinePositions() {
-		int length 	  = Mathf.CeilToInt(hold.elapsedPct * tracedPositions.Count);
-		linePositions = tracedPositions.GetRange(0, length).ToArray();
+	void GenerateLines(List<Vector3> colliderPts) {
+		int numLines = colliderPts.Count;
+		int ptsPerLine = NUM_POSITIONS / numLines;
 
-		line.SetPositions(linePositions);
+		for (int i = 0; i < numLines; i++) {
+			GameObject newLine = new GameObject();
+			newLine.transform.parent = transform;
+			newLine.transform.localPosition = Vector3.zero;
+
+			LineRenderer line   = newLine.AddComponent<LineRenderer>();
+			line.numCapVertices = 90;
+
+			List<Vector3> linePts = new List<Vector3>();
+			for (int x = 0; x < ptsPerLine; x++) {
+				int nextIndex = (i+1) % colliderPts.Count;
+				linePts.Add(Vector3.Lerp(colliderPts[i], colliderPts[ nextIndex ], (float)x / (float)ptsPerLine));
+			}
+			line.positionCount = ptsPerLine;
+			line.SetPositions(linePts.ToArray());
+
+			line.startWidth = width;
+			line.endWidth   = width;
+
+			line.useWorldSpace = false;
+			
+		}
 	}
 }

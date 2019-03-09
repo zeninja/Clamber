@@ -7,8 +7,9 @@ public class GlobalSettings : MonoBehaviour
 	[System.Serializable]
     public struct GameSettings
     {
-        public static bool align_view_to_dvc = true;
         public static int max_dvc_tilt_angle = 15;
+        public static bool align_view_to_dvc = true;
+        public static bool use_alt_ctrl_scheme = false;
     }
 
     [SerializeField]

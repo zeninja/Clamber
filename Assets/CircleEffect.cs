@@ -15,7 +15,7 @@ public class CircleEffect : MonoBehaviour
 
     void Awake()
     {
-        startTime = Time.time;
+        startTime          = Time.time;
         line               = gameObject.GetComponent<LineRenderer>();
         line.positionCount = (NUM_SEGMENTS + 1);
         line.useWorldSpace = false;

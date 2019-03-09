@@ -40,12 +40,13 @@ public class Hand : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        rb          = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
         grabDisplay = GetComponent<GrabDisplay>();
         SetColor();
     }
 
-    void SetColor() {
+    void SetColor()
+    {
         GetComponent<SpriteRenderer>().color = handColor;
     }
 
@@ -55,7 +56,7 @@ public class Hand : MonoBehaviour
     {
         Rotate();
 
-        if(SettingsDisplay.active) { return; }
+        if (SettingsDisplay.active) { return; }
 
         if (useBetterJump)
         {
@@ -89,10 +90,11 @@ public class Hand : MonoBehaviour
             case HandState.Jumping:
                 canJump = false;
                 CheckFirstInput();
+                grabDisplay.HandleJump();
                 break;
             case HandState.OnHold:
                 canJump = true;
-                
+
                 break;
         }
     }
@@ -139,27 +141,52 @@ public class Hand : MonoBehaviour
 
     void ProcessJumpInput()
     {
-        if (InputManager.inputJumpStart && canJump)
+
+        switch (GlobalSettings.GameSettings.use_alt_ctrl_scheme)
         {
-            // Debug.Log("Jumping");
-            rb.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
-            rb.gravityScale = 1;
+            case false:
+                // default controls
+                if (InputManager.inputJumpStart && canJump)
+                {
+                    Jump();
+                }
 
-            SetState(HandState.Jumping);
-        }
+                if (InputManager.inputJumpHeld)
+                {
+                    grabDisplay.HandleJump();
+                }
 
-        if (InputManager.inputJumpHeld) {
-            grabDisplay.HandleJump();
-        }
+                if (InputManager.inputJumpEnd)
+                {
+                    TryToGrab();
+                }
+                break;
 
-        if (InputManager.inputJumpEnd)
-        {
-            TryToGrab();
+            case true:
+                if (InputManager.inputJumpStart)
+                {
+                    TryToGrab();
+                }
+
+                if (InputManager.inputJumpEnd && canJump)
+                {
+                    Jump();
+                }
+                break;
         }
     }
 
     public float fallMultiplier = 2;
     public float lowJumpMultiplier = 3;
+
+    void Jump()
+    {
+        // Debug.Log("Jumping");
+        rb.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
+        rb.gravityScale = 1;
+
+        SetState(HandState.Jumping);
+    }
 
     void BetterJump()
     {
@@ -213,6 +240,8 @@ public class Hand : MonoBehaviour
 
         grabDisplay.HandleGrab();
 
+        AddGrabPositionToDisplay();
+
         SetState(HandState.OnHold);
     }
 
@@ -229,6 +258,27 @@ public class Hand : MonoBehaviour
     public void HandleLevelEnd()
     {
         rb.gravityScale = 0;
+    }
+
+
+    void AddGrabPositionToDisplay()
+    {
+        grabPositionHistory.Add(transform.position);
+        DrawGrabHistory();
+    }
+
+    List<Vector3> grabPositionHistory = new List<Vector3>();
+
+    float pathWidth = .0125f;
+
+    void DrawGrabHistory()
+    {
+        GameObject history = new GameObject();
+        LineRenderer l = history.AddComponent<LineRenderer>();
+        l.positionCount = grabPositionHistory.Count;
+        l.SetPositions(grabPositionHistory.ToArray());
+        l.startWidth = pathWidth;
+        l.endWidth = pathWidth;
     }
 
 }

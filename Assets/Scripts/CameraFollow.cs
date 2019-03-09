@@ -26,7 +26,11 @@ public class CameraFollow : MonoBehaviour {
 			y = target.position.y;
 		}
 
+		trackRotation = GlobalSettings.GameSettings.align_view_to_dvc;
+
 		transform.position = new Vector3(x, y, zDist);
-		transform.rotation = target.transform.rotation;
+		transform.rotation = trackRotation ? target.transform.rotation : Quaternion.identity;
 	}
+	bool trackRotation;
+
 }
