@@ -742,7 +742,7 @@ GameObject:
   - component: {fileID: 370038058}
   - component: {fileID: 370038059}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: GravityGrid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1002,7 +1002,9 @@ MonoBehaviour:
   y: 45
   grid_w: 10
   grid_h: 90
-  lineWidth: 0.025
+  dotWidth: 0.05
+  lineWidth: 0.0125
+  lineLength: 0.125
 --- !u!1 &387489626
 GameObject:
   m_ObjectHideFlags: 0

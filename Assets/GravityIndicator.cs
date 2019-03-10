@@ -12,16 +12,43 @@ public class GravityIndicator : MonoBehaviour
 
     public float grid_w, grid_h;
 
+	public float dotWidth  = .025f;
     public float lineWidth = .0125f;
+	public float lineLength = .125f;
 
     void Start()
     {
+		SpawnDots();
         SpawnLines();
     }
 
     void Update()
     {
 		UpdateLines();
+    }
+
+	void SpawnDots()
+    {
+        // lines = new List<LineRenderer>();
+
+        for (int i = 0; i < x; i++)
+        {
+            for (int j = 0; j < y; j++)
+            {
+                LineRenderer l = new GameObject().AddComponent<LineRenderer>().GetComponent<LineRenderer>();
+                l.transform.parent = transform;
+                l.transform.position = new Vector3((grid_w / 2) * ((float)i / (float)x), (grid_h / 2) * ((float)j / (float)y), 0);
+				l.transform.position += new Vector3(-x / 2, 0, 0);
+
+                l.SetWidth(dotWidth, dotWidth);
+                l.numCapVertices = 90;
+
+				Vector3[] positions = new Vector3[2];
+                positions[0] = l.transform.position;
+				positions[1] = l.transform.position;
+                l.SetPositions(positions);
+            }
+        }
     }
 
     void SpawnLines()
@@ -57,7 +84,7 @@ public class GravityIndicator : MonoBehaviour
 				l.transform.position += new Vector3(-x / 2, 0, 0);
 
                 positions[0] = l.transform.position;
-                positions[1] = l.transform.position;
+                positions[1] = l.transform.position + Vector3.down * lineLength;
 
                 l.positionCount = 2;
                 l.SetPositions(positions);
