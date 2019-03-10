@@ -11,6 +11,8 @@ public class Hold : MonoBehaviour
 
     public float lifetime = .5f;
     public float delayBeforeReactivation = .25f;
+    public bool canHold;
+
 
     void Start()
     {
@@ -29,8 +31,6 @@ public class Hold : MonoBehaviour
     {
         float t1 = 0;
         float d1 = lifetime;
-
-        canHold = true;
 
         while (t1 < d1)
         {
@@ -58,5 +58,4 @@ public class Hold : MonoBehaviour
 
 
 
-    public bool canHold;
 }

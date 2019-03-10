@@ -41,13 +41,19 @@ public class Hand : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        sp = GetComponent<SpriteRenderer>();
         grabDisplay = GetComponent<GrabDisplay>();
+
         SetColor();
+
+        AddGrabPositionToDisplay();
     }
+
+    SpriteRenderer sp;
 
     void SetColor()
     {
-        GetComponent<SpriteRenderer>().color = handColor;
+        sp.color = handColor;
     }
 
 
@@ -197,6 +203,8 @@ public class Hand : MonoBehaviour
         rb.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
         rb.gravityScale = 1;
 
+        sp.enabled = false;
+
         SetState(HandState.Jumping);
     }
 
@@ -250,6 +258,8 @@ public class Hand : MonoBehaviour
         rb.gravityScale = 0;
         rb.velocity = Vector2.zero;
 
+        sp.enabled = true;
+
         grabDisplay.HandleGrab();
 
         AddGrabPositionToDisplay();
@@ -264,6 +274,7 @@ public class Hand : MonoBehaviour
         // gets worse the more grab attempts you miss?
         // grabDisplay.HandleGrabFailed();
 
+        sp.enabled = false;
         grabDisplay.HandleGrab();
     }
 
@@ -290,7 +301,7 @@ public class Hand : MonoBehaviour
         l.positionCount = grabPositionHistory.Count;
         l.SetPositions(grabPositionHistory.ToArray());
         l.startWidth = pathWidth;
-        l.endWidth = pathWidth;
+        l.endWidth   = pathWidth;
     }
 
 }

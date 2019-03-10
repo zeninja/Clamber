@@ -12,6 +12,8 @@ public class LevelManager : MonoBehaviour {
 	public float distanceToNextHold = 2;
 	public static float HOLD_SPREAD = 45;
 	public float timeBetweenHoldSpawns = .01f;
+
+	public bool drawLevelLine;
 	
 	void Start() {
 		nextHoldPos = startHoldPos;
@@ -35,11 +37,14 @@ public class LevelManager : MonoBehaviour {
 
 			yield return new WaitForSeconds(timeBetweenHoldSpawns);
 		}
-		DrawLevelLine();
+
+		if (drawLevelLine) {
+			DrawLevelLine();
+		}
 	}
 
 	void DrawLevelLine() {
-		GameObject levelLine = new GameObject();
+		GameObject levelLine = new GameObject("Level Line");
 		LineRenderer l = levelLine.AddComponent<LineRenderer>();
 		l.positionCount = levelPath.Count;
 		l.SetPositions(levelPath.ToArray());

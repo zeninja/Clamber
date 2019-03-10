@@ -30,15 +30,15 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &1770849380702566
+--- !u!1 &1866432444719056
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4569213474025202}
-  - component: {fileID: 114678334607287770}
+  - component: {fileID: 4038504015327820}
+  - component: {fileID: 114638311517527382}
   m_Layer: 9
   m_Name: Outline
   m_TagString: Untagged
@@ -46,12 +46,12 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4569213474025202
+--- !u!4 &4038504015327820
 Transform:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1770849380702566}
+  m_GameObject: {fileID: 1866432444719056}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -69,7 +69,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4569213474025202}
+  - {fileID: 4038504015327820}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -118,20 +118,21 @@ MonoBehaviour:
   flashColor: {r: 0, g: 0, b: 0, a: 0}
   lifetime: 0.5
   delayBeforeReactivation: 0.25
-  elapsedPct: 0
   canHold: 0
---- !u!114 &114678334607287770
+  elapsedPct: 0
+--- !u!114 &114638311517527382
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1770849380702566}
+  m_GameObject: {fileID: 1866432444719056}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 39bca6918f1da634b8a6d148f7e0f08f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 0.01
+  updateLine: 1
+  width: 0.0125
 --- !u!212 &212496259382722870
 SpriteRenderer:
   m_ObjectHideFlags: 1

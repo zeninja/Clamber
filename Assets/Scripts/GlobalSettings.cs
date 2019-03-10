@@ -10,7 +10,7 @@ public class GlobalSettings : MonoBehaviour
         public static int max_dvc_tilt_angle = 15;
         public static bool align_view_to_dvc = true;
         public static bool use_alt_ctrl_scheme = false;
-        public static float jump_force = 225;
+        public static float jump_force = 200;
     }
 
     [SerializeField]
