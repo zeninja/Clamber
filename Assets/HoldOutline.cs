@@ -48,11 +48,7 @@ public class HoldOutline : MonoBehaviour
     {
         int ptsPerLine = NUM_POSITIONS / colliderPts.Count;
 
-        GameObject newLine = new GameObject();
-        newLine.transform.parent = transform;
-        newLine.transform.localPosition = Vector3.zero;
-
-        line = newLine.AddComponent<LineRenderer>();
+        line = gameObject.AddComponent<LineRenderer>();
 		line.numCapVertices = 90;
 
 		completeList = new List<Vector3>();

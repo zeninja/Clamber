@@ -118,6 +118,10 @@ public class SettingsDisplay : MonoBehaviour
         SetValueText();
     }
 
+    public void ResetGyro() {
+        InputManager.ResetGyro();
+    }
+
     public Vector2 activePos, inactivePos, targetPos;
 
     void SetState()

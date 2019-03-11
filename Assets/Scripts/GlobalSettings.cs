@@ -11,6 +11,8 @@ public class GlobalSettings : MonoBehaviour
         public static bool align_view_to_dvc = true;
         public static bool use_alt_ctrl_scheme = false;
         public static float jump_force = 200;
+
+        public static float line_width = .0125f;
     }
 
     [SerializeField]

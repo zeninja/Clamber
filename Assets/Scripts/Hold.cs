@@ -55,7 +55,20 @@ public class Hold : MonoBehaviour
         canHold = true;
     }
 
+    LineRenderer historyLine;
 
+    public void AddLine(Hold target) {
+        GameObject newLine = new GameObject();
+        historyLine = newLine.AddComponent<LineRenderer>();
+        
 
+        Vector3[] linePositions = new Vector3[2];
+        linePositions[0] = transform.position;
+        linePositions[1] = target.transform.position;
 
+        historyLine.positionCount = 2;
+        historyLine.SetPositions(linePositions);
+        historyLine.SetWidth(GlobalSettings.GameSettings.line_width, GlobalSettings.GameSettings.line_width);
+        historyLine.numCapVertices = 90;
+    }
 }

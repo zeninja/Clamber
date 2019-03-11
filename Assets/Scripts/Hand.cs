@@ -46,7 +46,7 @@ public class Hand : MonoBehaviour
 
         SetColor();
 
-        AddGrabPositionToDisplay();
+        // AddGrabPositionToDisplay();
     }
 
     SpriteRenderer sp;

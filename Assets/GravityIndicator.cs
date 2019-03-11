@@ -16,6 +16,8 @@ public class GravityIndicator : MonoBehaviour
     public float lineWidth = .0125f;
 	public float lineLength = .125f;
 
+	// public Extensions.Property lineLength;
+
     void Start()
     {
 		SpawnDots();

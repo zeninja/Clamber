@@ -18,9 +18,12 @@ public class InputManager : MonoBehaviour
 
     void Awake()
     {
-        if(SystemInfo.supportsGyroscope) {
+        if (SystemInfo.supportsGyroscope)
+        {
             Input.gyro.enabled = true;
-        } else {
+        }
+        else
+        {
             //
             Debug.Log("- - - NO GYRO - - -");
             useKeyboard = true;
@@ -47,9 +50,9 @@ public class InputManager : MonoBehaviour
 
     void HandleKeyboardInput()
     {
-        inputJumpStart  = Input.GetKeyDown(KeyCode.Space);
-        inputJumpHeld   = Input.GetKey(KeyCode.Space);
-        inputJumpEnd    = Input.GetKeyUp(KeyCode.Space);
+        inputJumpStart = Input.GetKeyDown(KeyCode.Space);
+        inputJumpHeld = Input.GetKey(KeyCode.Space);
+        inputJumpEnd = Input.GetKeyUp(KeyCode.Space);
         inputHorizontal = Input.GetAxisRaw("Horizontal");
     }
 
@@ -58,8 +61,8 @@ public class InputManager : MonoBehaviour
         if (Input.touchCount > 0)
         {
             inputJumpStart = Input.touches[0].phase == TouchPhase.Began;
-            inputJumpHeld  = Input.touches[0].phase == TouchPhase.Moved || Input.touches[0].phase == TouchPhase.Stationary;
-            inputJumpEnd   = Input.touches[0].phase == TouchPhase.Ended || Input.touches[0].phase == TouchPhase.Canceled;
+            inputJumpHeld = Input.touches[0].phase == TouchPhase.Moved || Input.touches[0].phase == TouchPhase.Stationary;
+            inputJumpEnd = Input.touches[0].phase == TouchPhase.Ended || Input.touches[0].phase == TouchPhase.Canceled;
         }
 
         if (Input.touchCount == 0)
@@ -108,5 +111,11 @@ public class InputManager : MonoBehaviour
         {
             DEVICE_TILT_ANGLE = MIN_TILT_ANGLE;
         }
+    }
+
+    public static void ResetGyro()
+    {
+        Input.gyro.enabled = false;
+        Input.gyro.enabled = true;
     }
 }
