@@ -159,14 +159,15 @@ MonoBehaviour:
   numHolds: 14
   holdPrefab: {fileID: 114006608990184736, guid: 7dc1c68cfbc44284482644d2e8bdf818,
     type: 2}
-  startHoldPos: {x: 0, y: 0}
+  startHoldPos: {x: 0, y: 3}
   spreadHoldSpawns: 1
   LONG_DIST: 2
   MED_DIST: 1.25
   SHORT_DIST: 0.75
+  SMALL_HOLD_SPREAD: 90
   timeBetweenHoldSpawns: 0.01
   drawLevelLine: 0
-  drawOffsetLines: 0
+  drawOffsetLines: 1
   levelPathWidth: 0.0125
 --- !u!1 &80958505
 GameObject:
@@ -669,6 +670,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46e8d08b6ac6f46cc9e3319b174d23db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  showStats: 0
+  showSettings: 0
   lowUIMode: 0
 --- !u!1 &366372024
 GameObject:
@@ -1166,8 +1169,8 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 390065946}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -63.457035, y: 249.56, z: -339.94608}
-  m_LocalScale: {x: 100, y: 15.91238, z: 1}
+  m_LocalPosition: {x: -63.457035, y: 251.808, z: -339.94608}
+  m_LocalScale: {x: 100, y: 11.425089, z: 1}
   m_Children: []
   m_Father: {fileID: 1895592247}
   m_RootOrder: 2

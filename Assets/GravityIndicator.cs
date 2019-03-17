@@ -26,9 +26,9 @@ public class GravityIndicator : MonoBehaviour
 
     void Update()
     {
-        #if UNITY_EDITOR
+        // #if UNITY_EDITOR
 		UpdateLines();
-        #endif
+        // #endif
     }
 
 	void SpawnDots()

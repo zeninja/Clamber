@@ -7,7 +7,7 @@ public class GlobalSettings : MonoBehaviour
 	[System.Serializable]
     public struct GameSettings
     {
-        public static int max_dvc_tilt_angle = 15;
+        public static int max_dvc_tilt_angle = 7;
         public static bool align_view_to_dvc = true;
         public static bool use_alt_ctrl_scheme = false;
         public static float jump_force = 200;

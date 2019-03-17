@@ -13,6 +13,7 @@ public class LevelManager : MonoBehaviour
     public float LONG_DIST = 2;
     public float MED_DIST = 1;
     public float SHORT_DIST = .5f;
+    public float SMALL_HOLD_SPREAD = 90;
     public static float HOLD_SPREAD = 45;
     public float timeBetweenHoldSpawns = .01f;
 
@@ -53,9 +54,9 @@ public class LevelManager : MonoBehaviour
         }
 
         // yield return StartCoroutine(SpawnMedHolds(largeHolds, 180, MED_DIST, .5f));	// med holds
-        yield return StartCoroutine(SpawnSmallHolds(largeHolds, 180, MED_DIST, .15f));  // med holds
-                                                                                        // yield return StartCoroutine(SpawnSmallHolds(largeHolds, 180, MED_DIST, .15f));	// med holds
-                                                                                        // yield return StartCoroutine(SpawnSmallHolds(largeHolds, 180, LONG_DIST, .15f));	// med holds
+        yield return StartCoroutine(SpawnSmallHolds(largeHolds, SMALL_HOLD_SPREAD, MED_DIST, .15f));  // med holds
+        // yield return StartCoroutine(SpawnSmallHolds(largeHolds, 180, MED_DIST, .15f));	// med holds
+        // yield return StartCoroutine(SpawnSmallHolds(largeHolds, 180, LONG_DIST, .15f));	// med holds
 
 
     }

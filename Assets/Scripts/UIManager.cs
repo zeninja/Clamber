@@ -6,17 +6,13 @@ using UnityEngine.UI;
 [ExecuteInEditMode]
 public class UIManager : MonoBehaviour {
 
-	bool showSettings;
-	bool showStats;
-
+	bool SHOW_SETTINGS, SHOW_STATS;
+	public bool showStats, showSettings;
 	public bool lowUIMode;
 
 	void Update() {
-		showStats = showStats && !lowUIMode;
-		showSettings = showSettings && !lowUIMode;;
-
-		
-
+		SHOW_STATS    = showStats	 && !lowUIMode;
+		SHOW_SETTINGS = showSettings && !lowUIMode;
 	}
 
 	public void InvertShowStats() {
