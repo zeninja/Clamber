@@ -21,7 +21,7 @@ public class HoldOutline : MonoBehaviour
     {
         if (GetComponentInParent<Hold>().elapsedPct < 1 && updateLine)
         {
-            DrawOutline();
+            DrawOutline(GetComponentInParent<Hold>().elapsedPct);
         }
     }
 
@@ -73,12 +73,11 @@ public class HoldOutline : MonoBehaviour
 
     List<Vector3> completeList;
 
-    void DrawOutline()
+    void DrawOutline(float pct)
     {
-        int shortRange = (int)(completeList.Count * (1 - hold.elapsedPct));
+        int shortRange = (int)(completeList.Count * (1 - pct));
         List<Vector3> shortenedList = completeList.GetRange(0, shortRange);
 		line.positionCount = shortenedList.Count;
 		line.SetPositions(shortenedList.ToArray());
-
     }
 }

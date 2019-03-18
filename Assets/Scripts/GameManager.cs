@@ -63,14 +63,14 @@ public class GameManager : MonoBehaviour
         }
 	}
 
-    public void StartBurn() {
-        startTime = Time.time;
-        SetState(GameState.Burn);
-    }
-
     public void Reset()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void StartBurn() {
+        startTime = Time.time;
+        SetState(GameState.Burn);
     }
 
     public void HandleLevelEnd()

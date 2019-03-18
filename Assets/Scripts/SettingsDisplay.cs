@@ -15,7 +15,8 @@ public class SettingsDisplay : MonoBehaviour
     public static bool active;
 
     public GameObject settingsButton;
-    public GameObject dvc_angleButton;
+    // public GameObject dvc_angleButton;
+    public GameObject settingsOnDisplay;
 
     public Color settingsOn, settingsOff;
 
@@ -30,8 +31,8 @@ public class SettingsDisplay : MonoBehaviour
     {
         labels[0] = "max_dvc_tilt_angle:";
         labels[1] = "align_view_to_dvc:";
-        labels[2] = "use_alt_ctrls_scheme:";
-        labels[3] = "jump_force:";
+        labels[2] = "jump_force:";
+        // labels[3] = "use_alt_ctrls_scheme:";
 
         string labelText = "\n";
 
@@ -52,8 +53,9 @@ public class SettingsDisplay : MonoBehaviour
     {
         values[0] = GlobalSettings.GameSettings.max_dvc_tilt_angle.ToString();
         values[1] = GlobalSettings.GameSettings.align_view_to_dvc.ToString();
-        values[2] = GlobalSettings.GameSettings.use_alt_ctrl_scheme.ToString();
-        values[3] = GlobalSettings.GameSettings.jump_force.ToString();
+        values[2] = GlobalSettings.GameSettings.jump_force.ToString();
+        // values[3] = GlobalSettings.GameSettings.use_alt_ctrl_scheme.ToString();
+
 
         string valueText = "\n";
         for(int i = 0; i < values.Length; i++) {
@@ -138,5 +140,7 @@ public class SettingsDisplay : MonoBehaviour
                 settingsButton.GetComponent<UnityEngine.UI.Image>().color = settingsOff;
                 break;
         }
+
+        settingsOnDisplay.SetActive(active);
     }
 }
