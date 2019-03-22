@@ -33,7 +33,7 @@ public class Hand : MonoBehaviour
 
     Rigidbody2D rb;
 
-    public enum HandState { OnHold, Jumping };
+    public enum HandState { OnHold, Jumping, GrabSuccess, GrabFailed, Falling };
     public static HandState state = HandState.OnHold;
     bool hasStarted = false;
 
@@ -100,7 +100,12 @@ public class Hand : MonoBehaviour
                 break;
             case HandState.OnHold:
                 canJump = true;
-
+                break;
+            case HandState.GrabSuccess:
+                SetState(HandState.OnHold);
+                break;
+            case HandState.GrabFailed:
+                SetState(HandState.Falling);
                 break;
         }
     }
@@ -230,7 +235,6 @@ public class Hand : MonoBehaviour
         }
     }
 
-
     void TryToGrab()
     {
         float handRadius = GetComponent<CircleCollider2D>().radius / 2;
@@ -260,11 +264,11 @@ public class Hand : MonoBehaviour
 
         sp.enabled = true;
 
-        grabDisplay.HandleGrab();
+        grabDisplay.HandleGrab(true);
 
         AddGrabPositionToDisplay();
 
-        SetState(HandState.OnHold);
+        SetState(HandState.GrabSuccess);
     }
 
     void HandleGrabFailed()
@@ -275,7 +279,9 @@ public class Hand : MonoBehaviour
         // grabDisplay.HandleGrabFailed();
 
         sp.enabled = false;
-        grabDisplay.HandleGrab();
+        grabDisplay.HandleGrab(false);
+
+        SetState(HandState.GrabFailed);
     }
 
     public void HandleLevelEnd()

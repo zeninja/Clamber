@@ -40,12 +40,12 @@ public class InputManager : MonoBehaviour
     void HandleInput()
     {
         HandleMobileInput();
-#if UNITY_EDITOR
+        #if UNITY_EDITOR
         if (useKeyboard)
         {
             HandleKeyboardInput();
         }
-#endif
+        #endif
     }
 
     void HandleKeyboardInput()

@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class GravityIndicator : MonoBehaviour
 {
-
-
     public List<LineRenderer> lines;
 
     public int x = 5, y = 45;
@@ -93,6 +91,11 @@ public class GravityIndicator : MonoBehaviour
                 l.positionCount = 2;
                 l.SetPositions(positions);
 
+
+
+
+                l.startColor = StyleManager.COLOR_PALETTE[4];
+                l.endColor = StyleManager.COLOR_PALETTE[4];
             }
         }
     }

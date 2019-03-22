@@ -6,6 +6,9 @@ using System.Linq;
 
 public class SettingsDisplay : MonoBehaviour
 {
+
+    public bool interactable = false;
+
     public TextMeshProUGUI tmp_labels;
     public TextMeshProUGUI tmp_values;
 

@@ -57,7 +57,7 @@ public class Hold : MonoBehaviour
 
     LineRenderer historyLine;
 
-    public void AddLine(Hold target) {
+    public void AddLine(Hold target, bool setChild = false) {
         GameObject newLine = new GameObject();
         historyLine = newLine.AddComponent<LineRenderer>();
         
@@ -70,5 +70,9 @@ public class Hold : MonoBehaviour
         historyLine.SetPositions(linePositions);
         historyLine.SetWidth(GlobalSettings.GameSettings.line_width, GlobalSettings.GameSettings.line_width);
         historyLine.numCapVertices = 90;
+
+        if (setChild) {
+            historyLine.transform.parent = target.transform;
+        }
     }
 }

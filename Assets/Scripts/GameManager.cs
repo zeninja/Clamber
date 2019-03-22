@@ -18,6 +18,10 @@ public class GameManager : MonoBehaviour
     public enum GameState { PreBurn, Burn, PostBurn }
     GameState state = GameState.PreBurn;
 
+    public GameState GetState() {
+        return state;
+    }
+
     void Awake()
     {
         if (instance == null)
