@@ -10,11 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 4938116087634648}
   - component: {fileID: 60634371432988266}
-  - component: {fileID: 114006608990184736}
   - component: {fileID: 212496259382722870}
   - component: {fileID: 331351247847378428}
+  - component: {fileID: 8362023232314272263}
   m_Layer: 9
-  m_Name: Hold
+  m_Name: Hold 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -66,24 +66,6 @@ PolygonCollider2D:
       - {x: 0.00000004371139, y: -0.5}
       - {x: 0.43301272, y: -0.24999996}
       - {x: 0.43301272, y: 0.24999996}
---- !u!114 &114006608990184736
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1753925993240948}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec292158aaf9a224282b760123255e8a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  holdColor: {r: 0.016019935, g: 0.6792453, b: 0.5232781, a: 1}
-  flashColor: {r: 0, g: 0, b: 0, a: 0}
-  lifetime: 0.5
-  delayBeforeReactivation: 0.25
-  canHold: 0
-  elapsedPct: 0
 --- !u!212 &212496259382722870
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -122,7 +104,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 246b10472a6c22f4ebe72c99cc4485a4, type: 3}
-  m_Color: {r: 0.21052866, g: 0.7830189, b: 0.85490197, a: 1}
+  m_Color: {r: 0.01886791, g: 0.01886791, b: 0.01886791, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -179,6 +161,18 @@ SpriteMask:
   m_BackSortingOrder: 0
   m_IsCustomRangeActive: 0
   m_SpriteSortPoint: 0
+--- !u!114 &8362023232314272263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1753925993240948}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61c9d205dd92a674cae6c623eb29965b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1866432444719056
 GameObject:
   m_ObjectHideFlags: 0

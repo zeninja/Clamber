@@ -14,9 +14,8 @@ public class StatsDisplay : MonoBehaviour {
 		string statsLabel = "\n" + 
 		"gyro:" + "\n" +
 		"roll:" + "\n" +
-		"hand:" + "\n" +
-		"game:" + "\n" +
-		"time:" + "\n";
+		"hztl:" + "\n" +
+		"r:" + "\n";
 
 		tmp_labels.text = statsLabel;
 	}
@@ -28,12 +27,11 @@ public class StatsDisplay : MonoBehaviour {
 
 	void DisplayStats() {
 		statsText = "\n" + 	// Skip first line because it's the header
-			GyroToUnity(Input.gyro.attitude).eulerAngles    + "\n" + 
-			InputManager.roll.ToString("F2")			   	+ "\n" +
-			// InputManager.inputHorizontal.ToString("F2")	    + "\n" +
-			Hand.currentRotation.z.ToString("F2")		    + "\n" +
-			GameManager.GetInstance().GetState().ToString() + "\n" +
-			GameManager.burnDuration.ToString("F3");	
+							GyroToUnity(Input.gyro.attitude).eulerAngles + "\n" + 
+							InputManager.roll.ToString("F2")			 + "\n" +
+							InputManager.inputHorizontal.ToString("F2")	 + "\n" +
+							Hand.currentRotation.z.ToString("F2")		 + "\n" +
+							GameManager.burnDuration.ToString("F3");	
 
 		tmp_values.text = statsText;
 	}
