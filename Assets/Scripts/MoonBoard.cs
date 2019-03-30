@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TextGrid : MonoBehaviour
+public class MoonBoard : MonoBehaviour
 {
 
     public int rowCount = 20, colCount = 10;
@@ -32,14 +32,14 @@ public class TextGrid : MonoBehaviour
         }
     }
 
-    public float filterPct = .15f;
+    public float wallCoverage = .15f;
 
     IEnumerator MakeRow(float height) {
         for (int x = 0; x < colCount; x++)
         {
             float p = Random.Range(0f, 1f);
 
-            if(p < 1 - filterPct) {
+            if(p < wallCoverage) {
                 GameObject rock = Instantiate(rockPrefab);
                 rock.transform.position = new Vector2((gridWidth / colCount) * x - ScreenInfo.w / 2 + (gridWidth / colCount) / 2, height);
                 rock.transform.localScale = GetRandomizedHoldScale();

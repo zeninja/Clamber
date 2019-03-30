@@ -11,7 +11,7 @@ public class Hold : MonoBehaviour
 
     public float lifetime = .5f;
     public float delayBeforeReactivation = .25f;
-    public bool canHold;
+    // public bool canHold;
 
 
     void Start()
@@ -43,7 +43,7 @@ public class Hold : MonoBehaviour
         float t2 = 0;
         float d2 = delayBeforeReactivation;
 
-        canHold = false;
+        // canHold = false;
 
         while (t2 < d2)
         {
@@ -52,7 +52,7 @@ public class Hold : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
 
-        canHold = true;
+        // canHold = true;
     }
 
     LineRenderer historyLine;

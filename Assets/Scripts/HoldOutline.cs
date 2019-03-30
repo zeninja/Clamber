@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// [ExecuteInEditMode]
 public class HoldOutline : MonoBehaviour
 {
 
@@ -19,20 +20,24 @@ public class HoldOutline : MonoBehaviour
 
     void Update()
     {
-        if (GetComponentInParent<Hold>().elapsedPct < 1 && updateLine)
+        if (hold != null)
         {
-            DrawOutline(GetComponentInParent<Hold>().elapsedPct);
+            if (GetComponentInParent<Hold>().elapsedPct < 1 && updateLine)
+            {
+                DrawOutline(GetComponentInParent<Hold>().elapsedPct);
+            }
         }
+
     }
 
-	public bool updateLine = false;
+    public bool updateLine = false;
 
     List<Vector3> tracedPositions;
     int NUM_POSITIONS = 300;
 
     List<Vector3> GetColliderPoints()
     {
-        Vector2[] pts = hold.GetComponent<PolygonCollider2D>().points;
+        Vector2[] pts = GetComponentInParent<PolygonCollider2D>().points;
         List<Vector3> final = new List<Vector3>();
 
         for (int i = 0; i < pts.Length; i++)
@@ -43,15 +48,15 @@ public class HoldOutline : MonoBehaviour
     }
 
     public float width;
-	LineRenderer line;
+    LineRenderer line;
     void GenerateLines(List<Vector3> colliderPts)
     {
         int ptsPerLine = NUM_POSITIONS / colliderPts.Count;
 
-        line = gameObject.AddComponent<LineRenderer>();
-		line.numCapVertices = 90;
+        line = GetComponent<LineRenderer>();
+        line.numCapVertices = 90;
 
-		completeList = new List<Vector3>();
+        completeList = new List<Vector3>();
 
         for (int i = 0; i < colliderPts.Count; i++)
         {
@@ -62,13 +67,13 @@ public class HoldOutline : MonoBehaviour
             }
             line.positionCount = ptsPerLine * colliderPts.Count;
             line.SetPositions(completeList.ToArray());
-
-            line.startWidth = width;
-            line.endWidth = width;
-
-            line.useWorldSpace = false;
-
         }
+
+        line.startWidth = width;
+        line.endWidth = width;
+
+        line.useWorldSpace = false;
+        line.loop = true;
     }
 
     List<Vector3> completeList;
@@ -77,7 +82,7 @@ public class HoldOutline : MonoBehaviour
     {
         int shortRange = (int)(completeList.Count * (1 - pct));
         List<Vector3> shortenedList = completeList.GetRange(0, shortRange);
-		line.positionCount = shortenedList.Count;
-		line.SetPositions(shortenedList.ToArray());
+        line.positionCount = shortenedList.Count;
+        line.SetPositions(shortenedList.ToArray());
     }
 }

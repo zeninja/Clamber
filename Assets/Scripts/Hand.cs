@@ -29,6 +29,15 @@ public class Hand : MonoBehaviour
         }
     }
 
+    public enum TutorialState { JumpOnly, JumpAndGrab, JumpGrabTilt };
+
+
+    public bool canJump = true;
+    public bool canGrab = true;
+    public bool canTilt = true;
+
+
+
     public float rotationSpeed = 5;
 
     Rigidbody2D rb;
@@ -94,12 +103,10 @@ public class Hand : MonoBehaviour
         switch (state)
         {
             case HandState.Jumping:
-                canJump = false;
                 CheckFirstInput();
                 grabDisplay.HandleJump();
                 break;
             case HandState.OnHold:
-                canJump = true;
                 break;
             case HandState.GrabSuccess:
                 SetState(HandState.OnHold);
@@ -148,17 +155,18 @@ public class Hand : MonoBehaviour
     public float MAX_JUMP_FORCE = 250;
     public float MIN_JUMP_FORCE = 200;
 
-    public void AdjustJumpForce() {
+    public void AdjustJumpForce()
+    {
         jumpForce++;
-        if (jumpForce > MAX_JUMP_FORCE) {
+        if (jumpForce > MAX_JUMP_FORCE)
+        {
             jumpForce = MIN_JUMP_FORCE;
         }
-        
+
     }
 
     Hold currentHold;
-    bool canJump = true;
-
+    public bool jumping;
     public bool useBetterJump = false;
 
     void ProcessJumpInput()
@@ -169,7 +177,7 @@ public class Hand : MonoBehaviour
         {
             case false:
                 // default controls
-                if (InputManager.inputJumpStart && canJump)
+                if (InputManager.inputJumpStart)
                 {
                     Jump();
                 }
@@ -191,7 +199,7 @@ public class Hand : MonoBehaviour
                     TryToGrab();
                 }
 
-                if (InputManager.inputJumpEnd && canJump)
+                if (InputManager.inputJumpEnd)
                 {
                     Jump();
                 }
@@ -204,13 +212,17 @@ public class Hand : MonoBehaviour
 
     void Jump()
     {
-        // Debug.Log("Jumping");
-        rb.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
-        rb.gravityScale = 1;
+        if (canJump && !jumping)
+        {
+            // Debug.Log("Jumping");
+            jumping = true;
+            rb.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
+            rb.gravityScale = 1;
 
-        sp.enabled = false;
+            sp.enabled = false;
 
-        SetState(HandState.Jumping);
+            SetState(HandState.Jumping);
+        }
     }
 
     void BetterJump()
@@ -254,10 +266,21 @@ public class Hand : MonoBehaviour
         }
     }
 
+    public LineRenderer grabIndicatorPrefab;
+    public Color grabSuccessColor, grabFailColor;
+
+    public void SpawnGrabSprite(bool grabSucceeded)
+    {
+        LineRenderer l = Instantiate(grabIndicatorPrefab, transform.position, Quaternion.identity);
+        l.material.color = grabSucceeded ? grabSuccessColor : grabFailColor;
+        // l.maskInteraction = grabSucceeded ? SpriteMaskInteraction.VisibleInsideMask : SpriteMaskInteraction.None;
+    }
+
     void HandleGrabSuccess(RaycastHit2D hit)
     {
         currentHold = hit.collider.gameObject.GetComponent<Hold>();
-        currentHold.GetGrabbed();
+
+        jumping = false;
 
         rb.gravityScale = 0;
         rb.velocity = Vector2.zero;
@@ -267,6 +290,7 @@ public class Hand : MonoBehaviour
         grabDisplay.HandleGrab(true);
 
         AddGrabPositionToDisplay();
+        SpawnGrabSprite(true);
 
         SetState(HandState.GrabSuccess);
     }
@@ -280,6 +304,7 @@ public class Hand : MonoBehaviour
 
         sp.enabled = false;
         grabDisplay.HandleGrab(false);
+        SpawnGrabSprite(false);
 
         SetState(HandState.GrabFailed);
     }
@@ -302,12 +327,12 @@ public class Hand : MonoBehaviour
 
     void DrawGrabHistory()
     {
-        GameObject history = new GameObject();
+        GameObject history = new GameObject("GrabHistory");
         LineRenderer l = history.AddComponent<LineRenderer>();
         l.positionCount = grabPositionHistory.Count;
         l.SetPositions(grabPositionHistory.ToArray());
         l.startWidth = pathWidth;
-        l.endWidth   = pathWidth;
+        l.endWidth = pathWidth;
     }
 
 }

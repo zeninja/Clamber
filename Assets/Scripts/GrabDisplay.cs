@@ -33,8 +33,9 @@ public class GrabDisplay : MonoBehaviour {
 
 		}
 
-
-		circle.radius = targetRadius;
+		if (circle != null)  {
+			circle.radius = targetRadius;	
+		}
 	}
 
 	public void HandleJump() {
