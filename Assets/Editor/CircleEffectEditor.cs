@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+[ExecuteInEditMode]
 [CustomEditor(typeof(CircleEffect))]
 public class CircleEffectEditor : Editor
 {
@@ -14,6 +15,7 @@ public class CircleEffectEditor : Editor
         circle.radius     = EditorGUILayout.Slider("Radius:", circle.radius , 0 , 6);
 
         circle.dottedLine = GUILayout.Toggle(circle.dottedLine, "Dotted line:");
+        // circle.lineType   = CircleEffect.LineType
 
         if (circle.dottedLine) {
             circle.dottedLineSegments = EditorGUILayout.IntSlider("Segment Count:", circle.dottedLineSegments , 1 , 360);

@@ -18,18 +18,21 @@ public class CircleEffect : MonoBehaviour
         line.positionCount = (pointCount);
         line.useWorldSpace = false;
         line.enabled = false;
+        // Debug.Log("aWOKE");
+        
     }
 
     void Start()
     {
         lines = new List<LineRenderer>();
+        CalculateRadius();
+        MakePoints();
     }
 
     void Update()
     {
         CalculateRadius();
 
-        MakeCircle();
         // CreatePoints();
     }
 
@@ -40,7 +43,7 @@ public class CircleEffect : MonoBehaviour
         adjustedRadius = Mathf.Clamp(radius - (lineWidth / 2), 0, radius / 2);
     }
 
-    void MakeCircle()
+    void MakePoints()
     {
         Vector3[] positions = new Vector3[pointCount + 1];
 
@@ -60,32 +63,13 @@ public class CircleEffect : MonoBehaviour
         line.positionCount = pointCount + 1;
         line.SetPositions(positions);
         line.enabled = true;
+
+        // Debug.Log("Made points");
     }
 
+    void UpdatePoints() {
 
-
-
-    // void CreatePoints()
-    // {
-    //     float x;
-    //     float y;
-    //     float z = -1f;
-
-    //     float angle = 0f;
-
-    //     for (int i = 0; i < pointCount; i++)
-    //     {
-    //         x = Mathf.Sin(Mathf.Deg2Rad * angle) * adjustedRadius;
-    //         y = Mathf.Cos(Mathf.Deg2Rad * angle) * adjustedRadius;
-
-    //         positions[i] = new Vector3(x, y, z);
-    //         angle += (360f / lines.Count);
-    //     }
-    //     line.SetWidth(lineWidth, lineWidth);
-    //     line.positionCount = pointCount + 1;
-    //     line.SetPositions(positions);
-    //     line.enabled = true;
-    // }
+    }
 
     public bool dottedLine = false;
     public int dottedLineSegments = 1;
