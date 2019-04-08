@@ -36,7 +36,16 @@ public class Hand : MonoBehaviour
     public bool canGrab = true;
     public bool canTilt = true;
 
+    public void PrepForTutorial()
+    {
+        canJump = false;
+        canGrab = false;
+        canTilt = false;
 
+        DrawInLines();
+    }
+
+    public LineController[] lines;
 
     public float rotationSpeed = 5;
 
@@ -87,7 +96,7 @@ public class Hand : MonoBehaviour
     {
         if (other.CompareTag("KillTrigger"))
         {
-            GameManager.GetInstance().Reset();
+            HandleDeath(other.transform.position.y);
         }
 
         if (other.CompareTag("LevelEnd"))
@@ -95,6 +104,29 @@ public class Hand : MonoBehaviour
             // GameManager.GetInstance().Reset();
             GameManager.GetInstance().HandleLevelEnd();
         }
+    }
+
+    // public LineRenderer deathIndicatorPrefab;
+    public Color deadColor;
+
+    public bool dead = false;
+
+    public GameObject deathIndicatorPrefab;
+
+    GameObject deathLine;
+    void HandleDeath(float yPos)
+    {
+        dead = true;
+        rb.velocity = Vector2.zero;
+        // rb.gravityScale = 0;
+
+        Vector3 deathPos = new Vector3(transform.position.x, yPos, 0);
+        deathLine = Instantiate(deathIndicatorPrefab, deathPos, Quaternion.identity);
+        deathLine.GetComponent<ShapeMaker>().SetColor(deadColor);
+
+        // gameObject.SetActive(false);
+
+        GameManager.GetInstance().HandleHandDeath();
     }
 
     void SetState(HandState newState)
@@ -122,6 +154,11 @@ public class Hand : MonoBehaviour
         return state == HandState.OnHold;
     }
 
+    public static bool GrabSucceeded()
+    {
+        return state == HandState.GrabSuccess;
+    }
+
     public static bool Jumping()
     {
         return state == HandState.Jumping;
@@ -138,12 +175,15 @@ public class Hand : MonoBehaviour
 
     void CheckFirstInput()
     {
-        // TEMP
-        // Replace this with better code in the game manager or something
-        if (!hasStarted)
+        if (GameManager.GetInstance().state != GameManager.GameState.Tutorial)
         {
-            hasStarted = true;
-            GameManager.GetInstance().StartBurn();
+            // TEMP
+            // Replace this with better code in the game manager or something
+            if (!hasStarted)
+            {
+                hasStarted = true;
+                GameManager.GetInstance().StartBurn();
+            }
         }
     }
 
@@ -162,7 +202,6 @@ public class Hand : MonoBehaviour
         {
             jumpForce = MIN_JUMP_FORCE;
         }
-
     }
 
     Hold currentHold;
@@ -249,6 +288,8 @@ public class Hand : MonoBehaviour
 
     void TryToGrab()
     {
+        if(dead) { return; }
+        
         float handRadius = GetComponent<CircleCollider2D>().radius / 2;
 
         int layerMask = 1 << LayerMask.NameToLayer("Hold");
@@ -269,11 +310,20 @@ public class Hand : MonoBehaviour
     public LineRenderer grabIndicatorPrefab;
     public Color grabSuccessColor, grabFailColor;
 
+
+    public bool grabHistoryEnabled = false;
+
     public void SpawnGrabSprite(bool grabSucceeded)
     {
-        LineRenderer l = Instantiate(grabIndicatorPrefab, transform.position, Quaternion.identity);
-        l.material.color = grabSucceeded ? grabSuccessColor : grabFailColor;
-        // l.maskInteraction = grabSucceeded ? SpriteMaskInteraction.VisibleInsideMask : SpriteMaskInteraction.None;
+        grabHistoryEnabled = canGrab;
+
+        if (grabHistoryEnabled)
+        {
+            LineRenderer l = Instantiate(grabIndicatorPrefab, transform.position, Quaternion.identity);
+            l.material.color = grabSucceeded ? grabSuccessColor : grabFailColor;
+            // l.maskInteraction = grabSucceeded ? SpriteMaskInteraction.VisibleInsideMask : SpriteMaskInteraction.None;
+            grabIndicators.Add(l.GetComponent<LineController>());
+        }
     }
 
     void HandleGrabSuccess(RaycastHit2D hit)
@@ -325,14 +375,70 @@ public class Hand : MonoBehaviour
 
     float pathWidth = .0125f;
 
+    List<GameObject> grabHistoryLines = new List<GameObject>();
+    public GameObject grabHistoryPrefab;
+
     void DrawGrabHistory()
     {
-        GameObject history = new GameObject("GrabHistory");
-        LineRenderer l = history.AddComponent<LineRenderer>();
+        GameObject history = Instantiate(grabHistoryPrefab) as GameObject;
+        LineRenderer l = history.GetComponent<LineRenderer>();
         l.positionCount = grabPositionHistory.Count;
         l.SetPositions(grabPositionHistory.ToArray());
         l.startWidth = pathWidth;
         l.endWidth = pathWidth;
+
+        grabHistoryLines.Add(history);
     }
+
+    void DrawInLines()
+    {
+        foreach (LineController l in lines)
+        {
+            l.enabled = false;
+            l.enabled = true;
+        }
+    }
+
+    public void Reset()
+    {
+        grabPositionHistory.Clear();
+        rb.gravityScale = 0;
+        rb.velocity = Vector2.zero;
+        transform.position = Vector2.zero;
+        dead = false;
+        KillDeathIndicators();
+        KillGrabIndicators();
+        KillHistoryLine();
+        DrawInLines();
+        AddGrabPositionToDisplay();
+    }
+
+    void KillDeathIndicators()
+    {
+        deathLine.GetComponent<LineController>().Undraw();
+        foreach (LineController l in deathLine.GetComponentsInChildren<LineController>())
+        {
+            l.Undraw();
+        }
+    }
+
+    List<LineController> grabIndicators = new List<LineController>();
+
+    void KillGrabIndicators()
+    {
+        foreach (LineController s in grabIndicators)
+        {
+            s.Undraw();
+        }
+    }
+
+    void KillHistoryLine()
+    {
+        foreach (GameObject line in grabHistoryLines)
+        {
+            Destroy(line.gameObject);
+        }
+    }
+
 
 }

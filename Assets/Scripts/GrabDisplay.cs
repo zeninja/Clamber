@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GrabDisplay : MonoBehaviour {
 
-	public CircleEffect circle;
+	public ShapeMaker circle;
 	public Transform followTarget;
 	public float jumpRadius = 3, grabRadius = .6f, failRadius = 1.5f;
 	public float grabDuration = .125f;

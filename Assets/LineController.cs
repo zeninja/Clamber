@@ -5,6 +5,8 @@ using System.Linq;
 
 public class LineController : MonoBehaviour
 {
+
+    public bool animateOnEnable;
     [Range(0, 1)]
     public float completion = 0;
 
@@ -13,6 +15,51 @@ public class LineController : MonoBehaviour
 
 
     LineRenderer line;
+
+    void OnEnable()
+    {
+        if (animateOnEnable && !animating)
+        {
+            animating = true;
+            StartCoroutine(DrawIn());
+        }
+    }
+
+    public float drawInDuration;
+    bool animating;
+
+    IEnumerator DrawIn()
+    {
+        float t = 0;
+        // Debug.Break();
+        while (t < drawInDuration)
+        {
+            t += Time.fixedDeltaTime;
+            float p = Mathf.Clamp01(t / drawInDuration);
+            completion = EZEasings.Linear(p);
+            yield return new WaitForFixedUpdate();
+        }
+
+        animating = false;
+    }
+
+    public void Undraw() {
+        StartCoroutine(DrawOut());
+    }
+
+    IEnumerator DrawOut()
+    {
+        float t = 0;
+        while (t < drawInDuration)
+        {
+            t += Time.fixedDeltaTime;
+            float p = Mathf.Clamp01(1 - t / drawInDuration);
+            completion = EZEasings.Linear(p);
+            yield return new WaitForFixedUpdate();
+        }
+
+        animating = false;
+    }
 
     void Start()
     {
@@ -27,7 +74,7 @@ public class LineController : MonoBehaviour
         completePositions = oldPositions.ToList();
     }
 
-    void LateUpdate()
+    void Update()
     {
         DrawShortenedLine(completion);
     }
@@ -38,21 +85,22 @@ public class LineController : MonoBehaviour
     void DrawShortenedLine(float amt)
     {
         if (completePositions.Count == 0) { return; }
-
         int shortenedCount = Mathf.RoundToInt(amt * completePositions.Count);
-
+        // Debug.Log("complete: " + completePositions.Count + "\n" + "shortened: " + shortenedCount + "\n" + "truncated: " + truncatedPositions.Count);
 
         switch (lineType)
         {
             case LineType.Progressive:
+                // if(completePositions.Count > shortenedCount) {
                 truncatedPositions = completePositions.GetRange(0, shortenedCount);
+                // }
                 break;
             case LineType.Centered:
                 truncatedPositions = completePositions.GetRange(truncatedPositions.Count / 2 - shortenedCount / 2, shortenedCount);
                 break;
         }
 
-        line.positionCount = shortenedCount;
+        line.positionCount = truncatedPositions.Count;
         line.SetPositions(truncatedPositions.ToArray());
     }
 

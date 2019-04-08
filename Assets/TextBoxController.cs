@@ -67,5 +67,6 @@ public class TextBoxController : MonoBehaviour
     public void HideText() {
         showString = "";
         tmp.text = showString;
+        
     }
 }

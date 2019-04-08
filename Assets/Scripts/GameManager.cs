@@ -4,29 +4,29 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 
+
 public class GameManager : MonoBehaviour
 {
 
     public static float burnDuration;
 
     private static GameManager instance;
-    public static GameManager GetInstance()
+    public  static GameManager GetInstance()
     {
         return instance;
     }
 
-    public enum GameState { PreBurn, Burn, PostBurn }
-    GameState state = GameState.PreBurn;
+    public enum GameState { Tutorial, PreBurn, Burn, PostBurn }
+    public GameState state = GameState.Tutorial;
 
-    public GameState GetState() {
-        return state;
-    }
+    public TutorialController tutorialController;
 
     void Awake()
     {
         if (instance == null)
         {
             instance = this;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -34,6 +34,21 @@ public class GameManager : MonoBehaviour
             {
                 Destroy(this.gameObject);
             }
+        }
+    }
+
+    void Start() {
+        InitGame();
+    }
+
+    bool hasPlayedTutorial = false;
+
+    void InitGame() {
+        if (hasPlayedTutorial) {
+            SetState(GameState.PreBurn);
+        } else {
+            hasPlayedTutorial = true;
+            SetState(GameState.Tutorial);
         }
     }
 
@@ -51,6 +66,9 @@ public class GameManager : MonoBehaviour
 		state = newState;
 
 		switch(state) {
+            case GameState.Tutorial:
+                tutorialController.StartTutorial();
+                break;                                                              
 			case GameState.PostBurn:
 				Hand.GetInstance().HandleLevelEnd();
 				break;
@@ -62,7 +80,7 @@ public class GameManager : MonoBehaviour
         switch (state)
         {
             case GameState.Burn:
-                burnDuration = Time.time - startTime;
+                burnDuration = Time.time - startTime;           // put this... in a timer script... what are you doing...
                 break;
         }
 	}
@@ -77,6 +95,14 @@ public class GameManager : MonoBehaviour
         SetState(GameState.Burn);
     }
 
+    public void HandleHandDeath() {
+        if (state == GameState.Tutorial) {
+            tutorialController.HandleHandDeath();
+        } else {
+            Reset();
+        }
+    }
+
     public void HandleLevelEnd()
     {
         EndTimer();
@@ -89,4 +115,5 @@ public class GameManager : MonoBehaviour
     {
         endTime = Time.time;
     }
+
 }

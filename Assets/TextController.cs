@@ -5,25 +5,20 @@ using TMPro;
 
 public class TextController : MonoBehaviour
 {
-    // Instruction Sets
-    public string[] intro;
-    public string[] jumpInstructions;
-    public string[] grabInstructions;
-    public string[] tiltInstructions;
-    int setIndex = 0;
+    [HideInInspector]
+    public TutorialController tutorialController;
+    TextMeshProUGUI tapToContinue;
+
+    public string[] text;
+
+    [HideInInspector]
+    public int setIndex = 0;
 
     bool inputReceived = false;
 
-
-    List<string[]> instructions;
-
     void Start()
     {
-        instructions = new List<string[]>();
-        instructions.Add(intro);
-        instructions.Add(jumpInstructions);
-        instructions.Add(grabInstructions);
-        instructions.Add(tiltInstructions);
+        tapToContinue = tutorialController.tapToContinue;
     }
 
     void Update()
@@ -33,14 +28,7 @@ public class TextController : MonoBehaviour
             StartCoroutine(ShowTextSet());
         }
 
-        // if (Input.GetKeyDown(KeyCode.RightShift))
-        // {
-        //     // IncrementSetIndex();
-        // }
-
         CheckForInput();
-
-
     }
 
     void CheckForInput()
@@ -56,114 +44,149 @@ public class TextController : MonoBehaviour
         StartCoroutine(ShowTextSet());
     }
 
-    public void PlayTextSet(int index)
-    {
-        setIndex = index;
-        StartCoroutine(ShowTextSet());
-    }
-
-    public void ReceiveInput()
-    {
-        inputReceived = true;
-    }
-
-    public void GoToNextSet()
-    {
-        setIndex = (setIndex + 1) % instructions.Count;
-    }
-
     public TextMeshProUGUI tmp;
-
     public float pauseAfterLines = .125f;
     public float pauseAfterLetters = .0125f;
     public float pauseAfterClears = 1f;
-
     int lineIndex = 0;
-    public bool useNewLines;
     string showString = "";
+    public bool isWaiting;
 
-
-    public static bool isWaiting;
+    public void Stop()
+    {
+        StopAllCoroutines();
+    }
 
     IEnumerator ShowTextSet()
     {
-        // Debug.Log("set: " + setIndex + "; line: " + lineIndex);
-
-        string[] currentInstructionSet = instructions[setIndex];
+        // Debug.Log("showing text set: " + setIndex);
+        string[] currentInstructionSet = text;
         string inputString = currentInstructionSet[lineIndex];
         char[] inputChars = inputString.ToCharArray();
 
-        // if(inputChars[0] == '"') {
-        //     Invoke(inputString, 0);
-        //     yield return new WaitForEndOfFrame();
-        // } 
-        // else
-        if (inputString == "wait")
+        if (inputChars[0] == '/')
         {
-            // indefinite waits
-            while (!inputReceived)
-            {
-                isWaiting = true;
-                yield return new WaitForEndOfFrame();
-            }
-
-            isWaiting = false;
-        }
-        else
-        if (inputString.Substring(0, 5) == ". . .")
-        {
-            // pauses
-
-            string x = inputString.Substring(5, inputString.Length - 5);
-            // Debug.Log("x = " + x);
-
-            float converted = float.Parse(x);
-
-            yield return new WaitForSeconds(converted);
-        }
-        else
-        if (inputString == "/clear")
-        {
-            // clear
-
-            showString = "";
-            tmp.text = showString;
-
-            yield return new WaitForSeconds(pauseAfterClears);
+            // "command"
+            yield return StartCoroutine(ProcessCommand(inputString));
         }
         else
         {
-            // linear
-            // handle real text
+            // real text
             for (int i = 0; i < inputString.Length; i++)
             {
                 showString += inputChars[i];
                 tmp.text = showString;
                 yield return new WaitForSeconds(pauseAfterLetters);
             }
-            yield return new WaitForSeconds(pauseAfterLines);
-        }
 
+            SkipLine();
+        }
+        yield return new WaitForSeconds(pauseAfterLines);
+        HandleLineCompleted(currentInstructionSet.Length);
+
+        inputReceived = false;
+    }
+
+    IEnumerator ProcessCommand(string inputString)
+    {
+        switch (inputString)
+        {
+            case "/space":
+                SkipLine();
+                yield return null;
+                yield break;
+
+            case "/wait":
+                float t = 0;
+                while (!inputReceived)
+                {
+                    // Debug.Log("waiting");
+                    isWaiting = true;
+                    t += Time.deltaTime;
+
+                    if (t > 1)
+                    {
+                        tapToContinue.gameObject.SetActive(true);
+                    }
+                    yield return new WaitForEndOfFrame();
+                }
+                tapToContinue.gameObject.SetActive(false);
+                isWaiting = false;
+
+                SkipLine();
+
+                yield break;
+
+            case "/hang":
+                SkipLine();
+                yield return new WaitForSeconds(.1f);
+                yield break;
+
+            case "/clear":
+                showString = "";
+                tmp.text = showString;
+                yield return new WaitForSeconds(pauseAfterClears);
+                yield break;
+
+            case "/enableJump":
+                tutorialController.EnableJump();
+                yield break;
+            case "/enableGrab":
+                tutorialController.EnableGrab();
+                yield break;
+            case "/enableHolds":
+                tutorialController.EnableHolds();
+                yield break;
+            case "/enableAllHolds":
+                tutorialController.EnableAllHolds();
+                yield break;
+            // case "/enableTilt":
+            //     tutorialController.EnableTilt();
+            //     yield break;
+            // case "/enableCamera":
+            //     tutorialController.EnableCamera();
+            //     yield break;
+            case "/prepGrab":
+                tutorialController.PrepGrab();
+                yield break;
+            case "/enableTracking":
+                tutorialController.EnableTracking();
+                yield break;
+            case "/resetDeath":
+                tutorialController.Reset();
+                yield break;
+            case "/confirmGrab":
+                tutorialController.ConfirmGrab();
+                yield break;
+            // case "/waitForGyro":
+            //     tutorialController.WaitForGyro();
+            //     yield break;
+        }
+    }
+
+    void SkipLine() {
+        showString += "\n";
+    }
+
+
+    void HandleLineCompleted(int setLength)
+    {
         lineIndex++;
 
-        if (showString != "")
+        if (lineIndex >= setLength)
         {
-            // we should only skip lines if the text has not just been cleared
-            showString += "\n";
-        }
-
-        // When we've exceeded line count, go to the next set and reset line index
-        if (lineIndex >= currentInstructionSet.Length)
-        {
-            setIndex++;
             lineIndex = 0;
-        }
 
-        if (setIndex < instructions.Count)
+            if (tutorialController != null)
+            {
+                // Debug.Log("GOING BACK TO TUTORIAL: " + "\n" + "set: " + setIndex + "; line: " + lineIndex);
+                // tutorialController.PlayTutorialText(setIndex);
+                tutorialController.HandleSetCompleted(setIndex);
+            }
+        }
+        else
         {
             StartCoroutine(ShowTextSet());
         }
-
-        inputReceived = false;
     }
 }

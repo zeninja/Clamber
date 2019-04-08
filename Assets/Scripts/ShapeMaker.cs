@@ -4,10 +4,16 @@ using UnityEngine;
 
 // [ExecuteInEditMode]
 [RequireComponent(typeof(LineRenderer))]
-public class CircleEffect : MonoBehaviour
+public class ShapeMaker : MonoBehaviour
 {
-    public int pointCount = 100;
+    [Range(3, 100)]
+    public int shapePointCount = 100;
+    [Range(3, 100)]
+    public int numVertices = 100;
+    // [Range(.125f, 6f)]
     public float radius;
+    // [Range(.125f, 6f)]
+
     public float lineWidth = .1f;
     List<LineRenderer> lines;
     LineRenderer line;
@@ -15,7 +21,7 @@ public class CircleEffect : MonoBehaviour
     void Awake()
     {
         line = GetComponent<LineRenderer>();
-        line.positionCount = (pointCount);
+        line.positionCount = (shapePointCount);
         line.useWorldSpace = false;
         line.enabled = false;
         // Debug.Log("aWOKE");
@@ -29,11 +35,22 @@ public class CircleEffect : MonoBehaviour
         MakePoints();
     }
 
+    public void SetColor(Color newColor) {
+        GetComponent<LineRenderer>().material.color = newColor;
+
+        if(transform.childCount > 0) {
+            LineRenderer[] childLines = GetComponentsInChildren<LineRenderer>();
+
+            foreach(LineRenderer l in childLines) {
+                l.material.color = newColor;
+            }
+        }
+    }
+
     void Update()
     {
+        // probably don't need this in update...?
         CalculateRadius();
-
-        // CreatePoints();
     }
 
     float adjustedRadius;
@@ -45,30 +62,26 @@ public class CircleEffect : MonoBehaviour
 
     void MakePoints()
     {
-        Vector3[] positions = new Vector3[pointCount + 1];
+        Vector3[] positions = new Vector3[shapePointCount + 1];
 
         float x, y, z = -1f;
         float angle = 0;
 
-        for (int i = 0; i < (pointCount + 1); i++)
+        for (int i = 0; i < (shapePointCount + 1); i++)
         {
             x = Mathf.Sin(Mathf.Deg2Rad * angle) * adjustedRadius;
             y = Mathf.Cos(Mathf.Deg2Rad * angle) * adjustedRadius;
 
             positions[i] = new Vector3(x, y, z);
-            angle += 360f / pointCount;
+            angle += 360f / shapePointCount;
         }
 
         line.SetWidth(lineWidth, lineWidth);
-        line.positionCount = pointCount + 1;
+        line.positionCount = shapePointCount + 1;
         line.SetPositions(positions);
         line.enabled = true;
 
         // Debug.Log("Made points");
-    }
-
-    void UpdatePoints() {
-
     }
 
     public bool dottedLine = false;

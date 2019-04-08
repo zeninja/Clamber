@@ -76,4 +76,10 @@ public class MaskedDots : MonoBehaviour
 
     //     transform.rotation = Quaternion.Euler(new Vector3(0, 0, lineRotation));
     // }
+
+    public void EnableAllHolds() {
+        for(int i = 0; i < transform.childCount; i++) {
+            transform.GetChild(i).gameObject.SetActive(true);
+        }
+    }
 }

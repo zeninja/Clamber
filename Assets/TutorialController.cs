@@ -5,142 +5,244 @@ using TMPro;
 
 public class TutorialController : MonoBehaviour
 {
-    public TextMeshProUGUI labels, values, tapToContinue;
-    // public float completion = 0;
 
-    string falseDash = "-----------------";
-    string trueDash = "------------------";
+    public TextMeshProUGUI labels, values, tapToContinue;
+    // string falseDash = "-----------------";
+    // string trueDash = "------------------";
     // string dash;
 
-    TextController textController;
+    TextController[] textControllers;
 
-    void Start() {
-        textController = GetComponent<TextController>();
-
-        // StartTutorial();
-    }
-
-    // Update is called once per frame
-    void Update()
+    void Awake()
     {
-        if (Input.GetKeyDown(KeyCode.T))
+        textControllers = GetComponentsInChildren<TextController>();
+
+        int i = 0;
+        foreach (TextController tc in textControllers)
         {
-            StartTutorial();
+            tc.tutorialController = this;
+            tc.setIndex = i;
+            i++;
         }
 
-        ProcessInput();
+        // DontDestroyOnLoad(gameObject);
+    }
 
-        CheckWait();
+    public void StartTutorial()
+    {
+        // Debug.Log("starting!!!");
+        if (!started)
+        {
+            started = true;
+            // Debug.Log("staraaaaaaaaaaaaaaaaaaaaaaating!!!");
+            Hand.GetInstance().PrepForTutorial();
+            state = TutorialState.Intro;
+            DoTutorial();
+        }
     }
 
     bool started = false;
+    bool hasTaughtJump = false;
 
-    void ProcessInput() {
-        if (InputManager.inputJumpStart && !started) {
-            started = true;
-            StartTutorial();
+    public enum TutorialState { Intro, TeachJump, JumpConfirmed, TeachGrab, ActivateCamera, ActivateGyro, TutorialComplete };
+    public TutorialState state = TutorialState.Intro;
+
+    void DoTutorial()
+    {
+        Debug.Log("Doing " + state);
+        textControllers[(int)state].PlayTextSet();
+    }
+
+    void Update() {
+        if (Input.GetKeyDown(KeyCode.Tab)) {
+            StopAllCoroutines();
+            StopAllText();
+            GoToNextTutorialSegment();
         }
     }
 
-    public enum TutorialState { off, intro, teachJump, teachGrab, teachAim };
-    TutorialState state = TutorialState.off;
+    public GameObject handPrefab;
 
-    void StartTutorial()
+    public void Reset()
     {
-        Hand.GetInstance().canJump = false;
-        Hand.GetInstance().canGrab = false;
-        Hand.GetInstance().canTilt = false;
-
-        textController.PlayTextSet(0);
+        // Debug.Log("Write code to Reset the tutorial now");
+        state = (TutorialState)deathIndex;
+        Hand.GetInstance().Reset();
+        textControllers[(int)state].PlayTextSet();
+        // Instantiate(handPrefab);
     }
 
-    bool startedWaitTimer;
-    float waitTimer = 1f;
-    float waitStartTime;
 
-    void CheckWait() {
-        float timeElapsed = 0;
+    void StopAllText()
+    {
+        foreach (TextController tc in textControllers)
+        {
+            tc.Stop();
+        }
+    }
 
-        if (TextController.isWaiting) {
-            if(!startedWaitTimer) {
-                waitStartTime = Time.time;
-                startedWaitTimer = true;
-            } else {
-                timeElapsed = Time.time - waitStartTime;
+    public void HandleSetCompleted(int lastPlayedIndex)
+    {
+        // text is done playing on screen, do whatever else needs to be done...
+        // Debug.Log("Set " + lastPlayedIndex + " completed");
 
-                if(timeElapsed > waitTimer) {
-                    tapToContinue.gameObject.SetActive(true);
+        switch (lastPlayedIndex)
+        {
+            case (int)TutorialState.Intro:
+                GoToNextTutorialSegment();
+                break;
+            case (int)TutorialState.TeachJump:
+                // Jump introduced
+                // Confirm jump instead of immediately going to next state
+                break;
+            case (int)TutorialState.JumpConfirmed:
+                // jump confirmed
+                GoToNextTutorialSegment();
+                break;
+            case (int)TutorialState.TeachGrab:
+                // grab introduced
+                // Confirm grab instead of immediately going to next state
+                break;
+            // case (int)TutorialState.GrabConfirmed:
+            //     // tracking
+            //     GoToNextTutorialSegment();
+            //     break;
+            case (int)TutorialState.ActivateCamera:
+                // GoToNextTutorialSegment();
+                break;
+            case (int)TutorialState.ActivateGyro:
+                // GoToNextTutorialSegment();
+                break;
+            case (int)TutorialState.TutorialComplete:
+                Debug.Log("tutorialComplete");
+                break;
+        }
+    }
+
+    void GoToNextTutorialSegment()
+    {
+        state++;
+        DoTutorial();
+    }
+
+    int textIndex;
+
+    void PlayText()
+    {
+        textControllers[textIndex].PlayTextSet();
+    }
+
+    void PlayNextTextSet()
+    {
+        textIndex++;
+        textControllers[textIndex].PlayTextSet();
+    }
+
+    int deathIndex;
+
+    public void HandleHandDeath()
+    {
+        deathIndex = (int)state;
+
+        if (deathIndex == (int)TutorialState.TeachJump)
+        {
+            Debug.Log("Jump confirmed. Playing text");
+            ConfirmJump();
+        }
+        else
+        {
+            StopAllCoroutines();
+            StopAllText();
+            textControllers[textControllers.Length - 1].PlayTextSet();
+        }
+    }
+
+    void ConfirmJump()
+    {
+        // state = TutorialState.JumpConfirmed;
+        // textControllers[(int)TutorialState.JumpConfirmed].PlayTextSet();
+        GoToNextTutorialSegment();
+    }
+
+    public void EnableJump()
+    {
+        Hand.GetInstance().canJump = true;
+
+    }
+
+    public void EnableGrab()
+    {
+        Hand.GetInstance().canGrab = true;
+    }
+
+    public GameObject tutorialHolds;
+
+    public void EnableHolds()
+    {
+        tutorialHolds.SetActive(true);
+    }
+
+    public void EnableAllHolds()
+    {
+        // hacky
+        tutorialHolds.GetComponent<MaskedDots>().EnableAllHolds();
+    }
+
+    public void EnableGyro() {
+        if(!Hand.GetInstance().canTilt) {
+            Hand.GetInstance().canTilt = true;
+            textControllers[(int)TutorialState.ActivateGyro].PlayTextSet();
+        }
+    }
+
+    // public void DisableHolds()
+    // {
+    //     tutorialHolds.SetActive(true);
+    // }
+
+    // public void EnableCamera()
+    // {
+    //     Debug.Log("SUPPOSED TO BE ENABLING THE CAMERA BUT NOT ACTUALLY DOING ANYTHING YET.");
+    // }
+
+    public void PrepGrab()
+    {
+        Hand.GetInstance().Reset();
+    }
+
+
+
+    public void ConfirmGrab()
+    {
+        StartCoroutine(WaitForGrab());
+    }
+
+    bool playerHasGrabbed = false;
+
+    IEnumerator WaitForGrab()
+    {
+        while (!playerHasGrabbed)
+        {
+            if (Hand.OnHold())
+            {
+                grabCount++;
+
+                if (grabCount > 3)
+                {
+                    playerHasGrabbed = true;
+                    GoToNextTutorialSegment();
                 }
             }
-        } else {
-            tapToContinue.gameObject.SetActive(false);
+            yield return new WaitForFixedUpdate();
         }
     }
 
+    int grabCount = 0;
+    public CameraFollow cameraTracking;
 
-    // public GameObject jumpText;
-    // public GameObject grabText;
-    // public GameObject tiltText;
-
-    // IEnumerator Tutorial()
-    // {
-    //     while (completion < 1)
-    //     {
-    //         switch (state)
-    //         {
-    //             case TutorialState.teachJump:
-    //                 break;
-    //             case TutorialState.teachGrab:
-    //                 break;
-    //             case TutorialState.teachAim:
-    //                 break;
-    //         }
-    //         SetText();
-
-    //         yield return null;
-    //     }
-    // }
-
-    // public void SetTutorialState(TutorialState newState)
-    // {
-    //     state = newState;
-    //     switch (state)
-    //     {
-    //         case TutorialState.teachJump:
-    //             Hand.GetInstance().canJump = true;
-    //             break;
-    //         case TutorialState.teachGrab:
-    //             Hand.GetInstance().canGrab = true;
-    //             break;
-    //         case TutorialState.teachAim:
-    //             Hand.GetInstance().canTilt = true;
-    //             break;
-    //     }
-    // }
-
-    // void SetText()
-    // {
-    //     bool canJump = Hand.GetInstance().canJump;
-    //     bool canGrab = Hand.GetInstance().canGrab;
-    //     bool canTilt = Hand.GetInstance().canTilt;
-
-    //     string dash1 = canJump ? trueDash : falseDash;
-    //     string dash2 = canGrab ? trueDash : falseDash;
-    //     string dash3 = canTilt ? trueDash : falseDash;
-
-    //     labels.text = "\n" + // skip first line for title
-    //                   "JUMP" + dash1 + "\n" +
-    //                   "GRAB" + dash2 + "\n" +
-    //                   "AIM" + dash3 + "-";
-
-    //     string jumpString = canJump ? "[TRUE]" : "[FALSE]";
-    //     string grabString = canGrab ? "[TRUE]" : "[FALSE]";
-    //     string tiltString = canTilt ? "[TRUE]" : "[FALSE]";
-
-    //     values.text = "\n" + // skip first line for title
-    //                 jumpString + "\n" +
-    //                 grabString + "\n" +
-    //                 tiltString + "\n";
-    // }
-
+    public void EnableTracking()
+    {
+        cameraTracking.trackX = true;
+        cameraTracking.trackY = true;
+    }
 }
