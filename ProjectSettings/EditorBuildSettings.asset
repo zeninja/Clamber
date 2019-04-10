@@ -6,8 +6,11 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: Assets/Scenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/Scenes/GridWall.unity
+    guid: ba3c37f2c39c13f409b987363f3d6876
   - enabled: 1
     path: Assets/Scenes/Speedwall.unity
     guid: 62e950ef1e7f7434cadb2f8c16f4bb8c

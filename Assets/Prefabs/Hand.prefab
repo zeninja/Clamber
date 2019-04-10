@@ -265,6 +265,7 @@ GameObject:
   - component: {fileID: 706949728}
   - component: {fileID: 706949730}
   - component: {fileID: 706949731}
+  - component: {fileID: 516202790}
   m_Layer: 0
   m_Name: GrabDisplayUI
   m_TagString: Untagged
@@ -490,7 +491,7 @@ LineRenderer:
     shadowBias: 0
     generateLightingData: 0
   m_UseWorldSpace: 0
-  m_Loop: 1
+  m_Loop: 0
 --- !u!114 &706949731
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -510,6 +511,22 @@ MonoBehaviour:
   dottedLine: 0
   dottedLineSegments: 1
   segmentPercentage: 1
+--- !u!114 &516202790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 706949727}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b4ded6b6da6bdf4ca52669732f2f897, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animateOnEnable: 1
+  completion: 0
+  drawInDuration: 0.5
+  lineType: 0
 --- !u!1 &1538182356
 GameObject:
   m_ObjectHideFlags: 0
@@ -1014,7 +1031,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d63a3b6a4bf9d4cdea0a477788c4d7d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shapePointCount: 100
+  shapePointCount: 6
   numVertices: 100
   radius: 0.5
   lineWidth: 0.0125
@@ -1033,9 +1050,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b4ded6b6da6bdf4ca52669732f2f897, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animateOnEnable: 0
+  animateOnEnable: 1
   completion: 1
-  drawInDuration: 0
+  drawInDuration: 0.5
   lineType: 0
 --- !u!1 &1594747461920156
 GameObject:
@@ -1054,7 +1071,7 @@ GameObject:
   - component: {fileID: 873160450}
   m_Layer: 0
   m_Name: Hand
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1112,7 +1129,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 17e75392470172a419d168ae485cc38c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 246b10472a6c22f4ebe72c99cc4485a4, type: 3}
   m_Color: {r: 0.13566953, g: 0, b: 0.1792453, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1139,11 +1156,13 @@ MonoBehaviour:
   canJump: 1
   canGrab: 1
   canTilt: 1
-  lines: []
+  lines:
+  - {fileID: 516202790}
+  - {fileID: 1907792126}
   rotationSpeed: 10
   deadColor: {r: 0, g: 0, b: 0, a: 1}
   dead: 0
-  deathIndicatorPrefab: {fileID: 2834182955104367652, guid: 06d548a7916e4b04083a801fe244b6ce,
+  deathIndicatorPrefab: {fileID: 4745796182739212579, guid: 60b2c83a135170240b271e60a6ed33bf,
     type: 3}
   jumpForce: 215
   MAX_JUMP_FORCE: 250
@@ -1157,6 +1176,8 @@ MonoBehaviour:
   grabSuccessColor: {r: 1, g: 0, b: 1, a: 1}
   grabFailColor: {r: 0, g: 0, b: 0, a: 1}
   grabHistoryEnabled: 0
+  grabHistoryPrefab: {fileID: 6904672642409527434, guid: 920d89090c730ae4e9f6cad272aa2b51,
+    type: 3}
 --- !u!58 &873160449
 CircleCollider2D:
   m_ObjectHideFlags: 0

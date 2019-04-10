@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class TutorialController : MonoBehaviour
 {
@@ -244,5 +245,12 @@ public class TutorialController : MonoBehaviour
     {
         cameraTracking.trackX = true;
         cameraTracking.trackY = true;
+    }
+
+    // public TextController tutorialComplete;
+
+    public void HandleTutorialComplete() {
+        // tutorialComplete.PlayTextSet();
+        SceneManager.LoadScene("Speedwall");
     }
 }

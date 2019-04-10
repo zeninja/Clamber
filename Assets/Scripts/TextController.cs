@@ -161,6 +161,7 @@ public class TextController : MonoBehaviour
             // case "/waitForGyro":
             //     tutorialController.WaitForGyro();
             //     yield break;
+            // case "/endTutorial":  
         }
     }
 
